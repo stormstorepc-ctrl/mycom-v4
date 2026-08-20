@@ -1,0 +1,147 @@
+-- MYCOM V4 데이터베이스 스키마
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'shop', 'admin')),
+    profile_image TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS shops (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    shop_name VARCHAR(200) NOT NULL,
+    business_number VARCHAR(50) UNIQUE,
+    address TEXT NOT NULL,
+    detail_address TEXT,
+    latitude DECIMAL(10, 7),
+    longitude DECIMAL(10, 7),
+    phone VARCHAR(20),
+    description TEXT,
+    rating DECIMAL(2, 1) DEFAULT 0.0,
+    review_count INT DEFAULT 0,
+    is_approved BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS pcs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    cpu VARCHAR(100),
+    gpu VARCHAR(100),
+    ram VARCHAR(50),
+    storage VARCHAR(100),
+    motherboard VARCHAR(100),
+    power_supply VARCHAR(100),
+    cooler VARCHAR(100),
+    pc_case VARCHAR(100),
+    condition_grade VARCHAR(20) DEFAULT 'good' CHECK (condition_grade IN ('excellent', 'good', 'fair', 'poor')),
+    purchase_date DATE,
+    warranty_remaining INT DEFAULT 0,
+    description TEXT,
+    images TEXT[],
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS quotes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    pc_id UUID REFERENCES pcs(id) ON DELETE SET NULL,
+    quote_type VARCHAR(20) NOT NULL CHECK (quote_type IN ('sell', 'buy')),
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    budget_min DECIMAL(12, 2),
+    budget_max DECIMAL(12, 2),
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'bidding', 'selected', 'closed', 'cancelled')),
+    selected_bid_id UUID,
+    expires_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS bids (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    quote_id UUID REFERENCES quotes(id) ON DELETE CASCADE,
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    amount DECIMAL(12, 2) NOT NULL,
+    message TEXT,
+    parts_detail JSONB,
+    is_selected BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reservations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    quote_id UUID REFERENCES quotes(id) ON DELETE SET NULL,
+    bid_id UUID REFERENCES bids(id) ON DELETE SET NULL,
+    reservation_date DATE NOT NULL,
+    reservation_time TIME NOT NULL,
+    service_type VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS chat_rooms (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    quote_id UUID REFERENCES quotes(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, shop_id, quote_id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    room_id UUID REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    sender_type VARCHAR(20) NOT NULL CHECK (sender_type IN ('user', 'shop', 'ai')),
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    reservation_id UUID REFERENCES reservations(id) ON DELETE SET NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    content TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    message TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    link VARCHAR(500),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_shops_location ON shops(latitude, longitude);
+CREATE INDEX IF NOT EXISTS idx_quotes_status ON quotes(status);
+CREATE INDEX IF NOT EXISTS idx_bids_quote ON bids(quote_id);
+CREATE INDEX IF NOT EXISTS idx_messages_room ON messages(room_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_user ON reservations(user_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_shop ON reservations(shop_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read);

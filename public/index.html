@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYCOM V4 - PC 거래 플랫폼</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-container">
+                <a href="/" class="logo">MYCOM</a>
+                <nav class="nav">
+                    <a href="#shops">매장 찾기</a>
+                    <a href="#quotes">견적 요청</a>
+                    <a href="#ai">AI 분석</a>
+                    <a href="#chat">채팅</a>
+                </nav>
+                <div class="auth-buttons" id="authButtons"></div>
+            </div>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <h1>PC 거래의 모든 것</h1>
+                <p>조립부터 중고 판매까지, MYCOM에서 한 번에</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showQuoteForm()">견적 요청하기</button>
+                    <button class="btn btn-secondary" onclick="showAIAnalysis()">AI PC 분석</button>
+                </div>
+            </section>
+
+            <section id="shops" class="section">
+                <h2>📍 주변 매장 찾기</h2>
+                <div class="location-info">
+                    <button class="btn btn-outline" onclick="getLocation()">내 위치 찾기</button>
+                    <span id="locationStatus">위치를 찾아주세요</span>
+                </div>
+                <div id="shopList" class="shop-list"></div>
+            </section>
+
+            <section id="quotes" class="section">
+                <h2>💰 견적 요청</h2>
+                <div class="quote-tabs">
+                    <button class="tab active" onclick="switchQuoteTab('sell')">PC 판매</button>
+                    <button class="tab" onclick="switchQuoteTab('buy')">PC 구매</button>
+                </div>
+                <div id="quoteList" class="quote-list"></div>
+            </section>
+
+            <section id="ai" class="section">
+                <h2>🤖 AI PC 분석</h2>
+                <div class="ai-container">
+                    <form id="aiForm" class="ai-form">
+                        <div class="form-group">
+                            <label>CPU</label>
+                            <input type="text" name="cpu" placeholder="예: Ryzen 7 7800X3D">
+                        </div>
+                        <div class="form-group">
+                            <label>GPU</label>
+                            <input type="text" name="gpu" placeholder="예: RTX 4070 Ti">
+                        </div>
+                        <div class="form-group">
+                            <label>RAM</label>
+                            <input type="text" name="ram" placeholder="예: DDR5 32GB">
+                        </div>
+                        <div class="form-group">
+                            <label>저장장치</label>
+                            <input type="text" name="storage" placeholder="예: NVMe 1TB">
+                        </div>
+                        <div class="form-group">
+                            <label>상태</label>
+                            <select name="condition_grade">
+                                <option value="excellent">최상</option>
+                                <option value="good" selected>양호</option>
+                                <option value="fair">보통</option>
+                                <option value="poor">나쁨</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">분석하기</button>
+                    </form>
+                    <div id="aiResult" class="ai-result"></div>
+                </div>
+            </section>
+
+            <section id="chat" class="section">
+                <h2>💬 실시간 채팅</h2>
+                <div id="chatContainer" class="chat-container"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 MYCOM. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/shops.js"></script>
+    <script src="js/quotes.js"></script>
+    <script src="js/bids.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
