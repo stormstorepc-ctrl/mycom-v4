@@ -7,7 +7,6 @@ const fs = require('fs');
 
 const { initSocket } = require('./services/socket');
 const initDatabase = require('./database/init');
-
 const authRoutes = require('./routes/auth');
 const shopRoutes = require('./routes/shops');
 const quoteRoutes = require('./routes/quotes');
@@ -23,12 +22,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Legacy main page gets the PARTNER bridge without rewriting the large index.html.
+app.get(['/', '/index.html'], (req, res, next) => {
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    fs.readFile(indexPath, 'utf8', (error, html) => {
+        if (error) return next(error);
+        const bridge = '<script src="/partner-link.js"></script>';
+        res.type('html').send(html.includes('</body>') ? html.replace('</body>', bridge + '</body>') : html + bridge);
+    });
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/shops', shopRoutes);
@@ -39,16 +46,10 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/ai', aiRoutes);
 
 app.get('/api/health', (req, res) => {
-    res.json({ 
-        status: 'ok', 
-        service: 'MYCOM V4',
-        timestamp: new Date().toISOString()
-    });
+    res.json({ status: 'ok', service: 'MYCOM V4', timestamp: new Date().toISOString() });
 });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 app.use((err, req, res, next) => {
     console.error('서버 오류:', err);
@@ -56,23 +57,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
 async function startServer() {
     try {
         await initDatabase();
         console.log('✅ 데이터베이스 연결 완료');
-
         initSocket(server);
         console.log('✅ Socket.IO 초기화 완료');
-
-        server.listen(PORT, () => {
-            console.log(`🚀 MYCOM V4 서버가 포트 ${PORT}에서 실행 중입니다.`);
-            console.log(`📍 http://localhost:${PORT}`);
-        });
+        server.listen(PORT, () => console.log(`🚀 MYCOM V4 서버가 포트 ${PORT}에서 실행 중입니다.`));
     } catch (error) {
         console.error('❌ 서버 시작 실패:', error);
         process.exit(1);
     }
 }
-
 startServer();
