@@ -65,8 +65,6 @@ async function startServer() {
 
         // 👇 여기에 딱 한 번만 실행될 권한 변경 코드를 추가합니다!
         const { pool } = require('./database/init'); // 혹은 이미 선언된 pool 객체 사용
-        await pool.query("UPDATE users SET role = 'SHOP' WHERE email = 'stormstorepc@gmail.com';");
-        console.log('✅ 계정 권한이 SHOP으로 변경되었습니다.');
 
         initSocket(server);
         console.log('✅ Socket.IO 초기화 완료');
