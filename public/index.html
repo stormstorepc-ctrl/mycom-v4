@@ -961,6 +961,82 @@ button {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
+
+/* ================= AUTH MODAL ================= */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 20px;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 26px 22px;
+    box-shadow: var(--shadow);
+}
+
+.modal-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.modal-tab {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sub);
+    cursor: pointer;
+}
+
+.modal-tab.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.modal-box h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+}
+
+.modal-box .form-group {
+    margin-bottom: 12px;
+}
+
+.modal-error {
+    color: var(--red);
+    font-size: 12px;
+    margin: -4px 0 12px;
+    min-height: 14px;
+}
+
+.modal-close {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--sub);
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -981,6 +1057,7 @@ button {
 
     <div class="header-right">
         <div class="location">📍 내 주변</div>
+        <button class="icon-btn" id="headerAuthBtn" onclick="showLogin()">👤</button>
         <button class="icon-btn">🔔</button>
     </div>
 
@@ -1208,7 +1285,7 @@ AI가 최적의 PC를 추천합니다.
 🔥 실시간 인기 입찰
 </div>
 
-<div class="more">전체보기 ›</div>
+<div class="more" onclick="go('bid')">전체보기 ›</div>
 
 </div>
 
@@ -1228,11 +1305,11 @@ AI가 최적의 PC를 추천합니다.
 </div>
 
 
-<div class="live-price">
+<div class="live-price" id="homeLivePrice">
 ₩920,000
 </div>
 
-<div class="live-sub">
+<div class="live-sub" id="homeLiveSpec">
 Ryzen 7 5800X · RTX 4070
 </div>
 
@@ -1244,7 +1321,7 @@ Ryzen 7 5800X · RTX 4070
 현재 입찰
 </div>
 
-<strong style="font-size:19px">
+<strong style="font-size:19px" id="homeLiveBidCount">
 7개 인증 매장
 </strong>
 </div>
@@ -1274,53 +1351,8 @@ Ryzen 7 5800X · RTX 4070
 
 </div>
 
-
-<div class="shop-card">
-
-<div class="shop-image">
-🖥️
-</div>
-
-<div class="shop-body">
-
-<div class="shop-name-row">
-
-<div class="shop-name">
-🏆 STORMPC 대구점
-</div>
-
-<div>
-♡
-</div>
-
-</div>
-
-<div class="shop-rating">
-⭐ 4.9 · 후기 238개 · 1.2km
-</div>
-
-<div class="shop-tags">
-
-<span class="tag">게이밍PC</span>
-<span class="tag">PC 조립</span>
-<span class="tag">출장 가능</span>
-
-</div>
-
-<div class="shop-actions">
-
-<button class="secondary-btn">
-💬 상담하기
-</button>
-
-<button class="small-primary">
-견적 요청
-</button>
-
-</div>
-
-</div>
-
+<div id="homeShopList">
+<!-- 매장 목록이 여기에 동적으로 표시됩니다 -->
 </div>
 
 </section>
@@ -1379,7 +1411,7 @@ Ryzen 7 5800X · RTX 4070
 
 <label>RAM</label>
 
-<input class="input" placeholder="예: 32GB DDR4">
+<input class="input" id="ram" placeholder="예: 32GB DDR4">
 
 </div>
 
@@ -1388,7 +1420,7 @@ Ryzen 7 5800X · RTX 4070
 
 <label>SSD</label>
 
-<input class="input" placeholder="예: NVMe 1TB">
+<input class="input" id="storage" placeholder="예: NVMe 1TB">
 
 </div>
 
@@ -1431,7 +1463,7 @@ AI 예상 가격
 <div class="price-result">
 
 <div class="price-label">
-✨ AI 분석 완료 · 신뢰도 92%
+✨ AI 분석 완료 · 신뢰도 <span id="aiConfidence">92%</span>
 </div>
 
 <div style="margin-top:18px;font-size:13px">
@@ -1460,7 +1492,7 @@ font-size:30px;
 font-weight:900;
 color:var(--primary);
 margin-top:7px
-">
+" id="aiPriceRange">
 
 ₩820,000 ~ ₩950,000
 
@@ -1474,7 +1506,7 @@ AI가 분석한 결과입니다.
 </div>
 
 
-<button class="primary-btn" onclick="go('bid')">
+<button class="primary-btn" onclick="submitSellQuote()">
 
 🔥 인증 매장 입찰 받기
 
@@ -1498,7 +1530,7 @@ AI가 분석한 결과입니다.
 </div>
 
 
-<div class="page-content">
+<div class="page-content" id="bidContent">
 
 <div class="info-box">
 
@@ -1518,7 +1550,7 @@ align-items:center
 font-size:30px;
 font-weight:900;
 margin-top:4px
-">
+" id="bidHighestPrice">
 
 ₩920,000
 
@@ -1534,61 +1566,8 @@ margin-top:4px
 
 </div>
 
-
-<div class="bid-card">
-
-<div class="rank">🥇</div>
-
-<div class="bid-info">
-
-<strong>STORMPC</strong>
-
-<span>⭐ 4.9 · 거래 312건</span>
-
-</div>
-
-<div class="bid-price">
-₩920,000
-</div>
-
-</div>
-
-
-<div class="bid-card">
-
-<div class="rank">🥈</div>
-
-<div class="bid-info">
-
-<strong>컴퓨터월드</strong>
-
-<span>⭐ 4.8 · 거래 205건</span>
-
-</div>
-
-<div class="bid-price">
-₩900,000
-</div>
-
-</div>
-
-
-<div class="bid-card">
-
-<div class="rank">🥉</div>
-
-<div class="bid-info">
-
-<strong>PC 마스터</strong>
-
-<span>⭐ 4.7 · 거래 184건</span>
-
-</div>
-
-<div class="bid-price">
-₩880,000
-</div>
-
+<div id="bidList">
+<!-- 입찰 목록이 여기에 동적으로 표시됩니다 -->
 </div>
 
 
@@ -1786,7 +1765,7 @@ margin-top:5px
 </div>
 
 
-<button class="primary-btn">
+<button class="primary-btn" onclick="requestQuote()">
 
 여러 매장에 견적 요청하기
 
@@ -1900,7 +1879,7 @@ color:var(--primary)
 </div>
 
 
-<div class="page-content">
+<div class="page-content" id="shopsContent">
 
 <div class="info-box">
 
@@ -1915,87 +1894,7 @@ color:var(--primary)
 
 </div>
 
-
-<div class="shop-card">
-
-<div class="shop-image">
-🖥️
-</div>
-
-<div class="shop-body">
-
-<div class="shop-name">
-🏆 STORMPC 대구점
-</div>
-
-<div class="shop-rating">
-⭐ 4.9 · 리뷰 238개 · 📍 1.2km
-</div>
-
-<div class="shop-tags">
-
-<span class="tag">게이밍 PC</span>
-<span class="tag">조립</span>
-<span class="tag">출장</span>
-
-</div>
-
-<div class="shop-actions">
-
-<button class="secondary-btn" onclick="go('chat')">
-💬 상담
-</button>
-
-<button class="small-primary">
-방문 예약
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="shop-card">
-
-<div class="shop-image">
-🔧
-</div>
-
-<div class="shop-body">
-
-<div class="shop-name">
-컴퓨터월드
-</div>
-
-<div class="shop-rating">
-⭐ 4.8 · 리뷰 156개 · 📍 2.4km
-</div>
-
-<div class="shop-tags">
-
-<span class="tag">수리</span>
-<span class="tag">업그레이드</span>
-<span class="tag">중고매입</span>
-
-</div>
-
-<div class="shop-actions">
-
-<button class="secondary-btn">
-💬 상담
-</button>
-
-<button class="small-primary">
-방문 예약
-</button>
-
-</div>
-
-</div>
-
-</div>
+<!-- 매장 목록이 여기에 동적으로 표시됩니다 -->
 
 </div>
 
@@ -2062,7 +1961,7 @@ onkeypress="if(event.key==='Enter')sendMessage()"
 MY
 </div>
 
-<button class="icon-btn">
+<button class="icon-btn" onclick="showToast('설정 기능은 아직 준비 중입니다.')">
 ⚙️
 </button>
 
@@ -2081,7 +1980,7 @@ MY
 
 <small>MYCOM MEMBER</small>
 
-<strong>홍길동님 👋</strong>
+<strong id="profileName">로그인이 필요합니다</strong>
 
 </div>
 
@@ -2092,7 +1991,7 @@ MY
 
 <div class="stat">
 
-<strong>12,500P</strong>
+<strong id="statPoints">0P</strong>
 
 <span>보유 포인트</span>
 
@@ -2100,7 +1999,7 @@ MY
 
 <div class="stat">
 
-<strong>8건</strong>
+<strong id="statTrades">0건</strong>
 
 <span>누적 거래</span>
 
@@ -2120,7 +2019,7 @@ MY
 
 <div class="menu-list">
 
-<div class="menu-item">
+<div class="menu-item" onclick="go('bid')">
 
 <span>🔥</span>
 
@@ -2130,7 +2029,7 @@ MY
 
 </div>
 
-<div class="menu-item">
+<div class="menu-item" onclick="go('myquotes')">
 
 <span>📋</span>
 
@@ -2140,7 +2039,7 @@ MY
 
 </div>
 
-<div class="menu-item">
+<div class="menu-item" onclick="go('myreservations')">
 
 <span>📅</span>
 
@@ -2150,7 +2049,7 @@ MY
 
 </div>
 
-<div class="menu-item">
+<div class="menu-item" onclick="showToast('찜한 매장 기능은 아직 준비 중입니다.')">
 
 <span>♡</span>
 
@@ -2160,7 +2059,7 @@ MY
 
 </div>
 
-<div class="menu-item">
+<div class="menu-item" onclick="go('chat')">
 
 <span>💬</span>
 
@@ -2183,7 +2082,7 @@ MY
 
 <div class="menu-list">
 
-<div class="menu-item">
+<div class="menu-item" onclick="showToast('매장 관리자 페이지로 이동합니다.')">
 
 <span>🏪</span>
 
@@ -2193,7 +2092,7 @@ MY
 
 </div>
 
-<div class="menu-item">
+<div class="menu-item" onclick="showToast('관리자 설정입니다.')">
 
 <span>⚙️</span>
 
@@ -2203,9 +2102,61 @@ MY
 
 </div>
 
+<div class="menu-item" onclick="confirmLogout()">
+
+<span>🚪</span>
+
+<span>로그아웃</span>
+
+<span>›</span>
+
+</div>
+
 </div>
 
 </section>
+
+</div>
+
+
+<!-- ================= MY QUOTES ================= -->
+
+<div class="screen" id="myquotes">
+
+<div class="page-header">
+
+<button class="back-btn" onclick="go('mypage')">‹</button>
+
+내 견적
+
+</div>
+
+<div class="page-content" id="myquotesContent">
+
+<p>불러오는 중...</p>
+
+</div>
+
+</div>
+
+
+<!-- ================= MY RESERVATIONS ================= -->
+
+<div class="screen" id="myreservations">
+
+<div class="page-header">
+
+<button class="back-btn" onclick="go('mypage')">‹</button>
+
+예약 내역
+
+</div>
+
+<div class="page-content" id="myreservationsContent">
+
+<p>불러오는 중...</p>
+
+</div>
 
 </div>
 
@@ -2263,210 +2214,656 @@ MY
 
 <div class="toast" id="toast"></div>
 
+
+<!-- ================= AUTH MODAL ================= -->
+
+<div class="modal-overlay" id="authModal">
+
+<div class="modal-box">
+
+<div class="modal-tabs">
+<div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')">로그인</div>
+<div class="modal-tab" id="tabRegister" onclick="switchAuthTab('register')">회원가입</div>
+</div>
+
+<div id="loginForm">
+<h2>로그인</h2>
+<div class="form-group">
+<label>이메일</label>
+<input class="input" id="loginEmail" type="email" placeholder="you@example.com">
+</div>
+<div class="form-group">
+<label>비밀번호</label>
+<input class="input" id="loginPassword" type="password" placeholder="비밀번호">
+</div>
+<div class="modal-error" id="loginError"></div>
+<button class="primary-btn" style="width:100%" onclick="submitLogin()">로그인</button>
+</div>
+
+<div id="registerForm" style="display:none">
+<h2>회원가입</h2>
+<div class="form-group">
+<label>이름</label>
+<input class="input" id="registerName" placeholder="이름">
+</div>
+<div class="form-group">
+<label>이메일</label>
+<input class="input" id="registerEmail" type="email" placeholder="you@example.com">
+</div>
+<div class="form-group">
+<label>비밀번호 (8자 이상)</label>
+<input class="input" id="registerPassword" type="password" placeholder="비밀번호">
+</div>
+<div class="modal-error" id="registerError"></div>
+<button class="primary-btn" style="width:100%" onclick="submitRegister()">회원가입</button>
+</div>
+
+<div class="modal-close" onclick="closeAuthModal()">닫기</div>
+
+</div>
+
+</div>
+
 </div>
 
 
 <script>
 
+/* ================= API 설정 ================= */
+const API_BASE = '/api';
+let token = localStorage.getItem('mycom_token');
+let currentUser = null;
+
+async function apiCall(endpoint, method = 'GET', body = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null
+    });
+    
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '오류 발생');
+    return data;
+}
+
 /* ================= PAGE ================= */
 
 function go(id, nav) {
-
-    document.querySelectorAll(".screen")
-        .forEach(screen => {
-            screen.classList.remove("active");
-        });
-
-    document.getElementById(id)
-        .classList.add("active");
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
     });
+    document.getElementById(id).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-    if(nav) {
-
-        document.querySelectorAll(".nav-item")
-            .forEach(item => {
-                item.classList.remove("active");
-            });
-
+    if (nav) {
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.remove("active");
+        });
         nav.classList.add("active");
-
     }
 
+    // 화면별 데이터 로드
+    if (id === 'shops') loadShops();
+    if (id === 'bid') loadBids();
+    if (id === 'mypage') loadMyPage();
+    if (id === 'home') loadHomeData();
+    if (id === 'myquotes') loadMyQuotes();
+    if (id === 'myreservations') loadMyReservations();
 }
-
 
 /* ================= HERO SLIDER ================= */
 
 let currentSlide = 0;
-
 const track = document.getElementById("heroTrack");
-
 const dots = document.querySelectorAll(".dot");
 
 function changeSlide(index) {
-
     currentSlide = index;
-
-    track.style.transform =
-        `translateX(-${index * 100}%)`;
-
-    dots.forEach((dot,i) => {
-
-        dot.classList.toggle(
-            "active",
-            i === index
-        );
-
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === index);
     });
-
 }
 
 setInterval(() => {
-
     currentSlide++;
-
-    if(currentSlide > 2) {
-        currentSlide = 0;
-    }
-
+    if (currentSlide > 2) currentSlide = 0;
     changeSlide(currentSlide);
-
 }, 4500);
 
+/* ================= AUTH ================= */
+
+async function checkAuth() {
+    if (!token) return;
+    try {
+        const data = await apiCall('/auth/me');
+        currentUser = data.user;
+        updateUserUI();
+    } catch (e) {
+        token = null;
+        localStorage.removeItem('mycom_token');
+    }
+}
+
+function updateUserUI() {
+    const headerBtn = document.getElementById('headerAuthBtn');
+    if (currentUser) {
+        const profileName = document.getElementById('profileName');
+        if (profileName) profileName.textContent = `${currentUser.name}님 👋`;
+        if (headerBtn) headerBtn.textContent = '😊';
+    } else {
+        const profileName = document.getElementById('profileName');
+        if (profileName) profileName.textContent = '로그인이 필요합니다';
+        if (headerBtn) headerBtn.textContent = '👤';
+    }
+}
+
+// 로그인 여부를 확인하고, 로그인이 안 되어 있으면 로그인 모달을 띄운다.
+// 로그인 상태면 true, 아니면 false를 반환한다.
+function requireLogin() {
+    if (currentUser) return true;
+    showToast('로그인이 필요합니다.');
+    openAuthModal('login');
+    return false;
+}
+
+function showLogin() {
+    openAuthModal('login');
+}
+
+function openAuthModal(mode) {
+    if (currentUser) {
+        // 이미 로그인 상태에서 헤더 아이콘을 누르면 마이페이지로 이동
+        go('mypage');
+        return;
+    }
+    document.getElementById('authModal').classList.add('show');
+    switchAuthTab(mode || 'login');
+}
+
+function closeAuthModal() {
+    document.getElementById('authModal').classList.remove('show');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerError').textContent = '';
+}
+
+function switchAuthTab(mode) {
+    const isLogin = mode === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+    document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
+}
+
+async function submitLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    errorEl.textContent = '';
+
+    if (!email || !password) {
+        errorEl.textContent = '이메일과 비밀번호를 입력해주세요.';
+        return;
+    }
+
+    try {
+        const data = await apiCall('/auth/login', 'POST', { email, password });
+        token = data.token;
+        localStorage.setItem('mycom_token', token);
+        currentUser = data.user;
+        updateUserUI();
+        closeAuthModal();
+        showToast(`${currentUser.name}님 환영합니다!`);
+    } catch (error) {
+        errorEl.textContent = error.message;
+    }
+}
+
+async function submitRegister() {
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const errorEl = document.getElementById('registerError');
+    errorEl.textContent = '';
+
+    if (!name || !email || !password) {
+        errorEl.textContent = '모든 항목을 입력해주세요.';
+        return;
+    }
+    if (password.length < 8) {
+        errorEl.textContent = '비밀번호는 8자 이상이어야 합니다.';
+        return;
+    }
+
+    try {
+        const data = await apiCall('/auth/register', 'POST', { email, password, name });
+        token = data.token;
+        localStorage.setItem('mycom_token', token);
+        currentUser = data.user;
+        updateUserUI();
+        closeAuthModal();
+        showToast(`${currentUser.name}님, 회원가입을 환영합니다!`);
+    } catch (error) {
+        errorEl.textContent = error.message;
+    }
+}
+
+function confirmLogout() {
+    if (confirm('로그아웃 하시겠습니까?')) logout();
+}
+
+function logout() {
+    token = null;
+    currentUser = null;
+    localStorage.removeItem('mycom_token');
+    showToast('로그아웃되었습니다.');
+    updateUserUI();
+    go('home');
+}
+
+/* ================= HOME DATA ================= */
+
+async function loadHomeData() {
+    // 매장 목록 로드
+    try {
+        const data = await apiCall('/shops');
+        const shops = data.shops.slice(0, 2); // 홈에는 2개만 표시
+        const container = document.getElementById('homeShopList');
+        if (shops.length === 0) {
+            container.innerHTML = '<p>등록된 매장이 없습니다.</p>';
+            return;
+        }
+        container.innerHTML = shops.map(shop => `
+            <div class="shop-card">
+                <div class="shop-image">🖥️</div>
+                <div class="shop-body">
+                    <div class="shop-name-row">
+                        <div class="shop-name">${shop.shop_name}</div>
+                        <div>♡</div>
+                    </div>
+                    <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 후기 ${shop.review_count || 0}개</div>
+                    <div class="shop-tags">
+                        <span class="tag">PC 전문</span>
+                    </div>
+                    <div class="shop-actions">
+                        <button class="secondary-btn" onclick="go('chat')">💬 상담하기</button>
+                        <button class="small-primary" onclick="go('shops')">견적 요청</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error('홈 매장 로드 실패:', e);
+    }
+
+    // 실시간 입찰 정보 로드
+    try {
+        const data = await apiCall('/quotes?status=bidding&type=sell');
+        if (data.quotes.length > 0) {
+            const quote = data.quotes[0];
+            const bidsData = await apiCall(`/bids/quote/${quote.id}`);
+            if (bidsData.bids.length > 0) {
+                document.getElementById('homeLivePrice').textContent = '₩' + bidsData.bids[0].amount.toLocaleString();
+                document.getElementById('homeLiveBidCount').textContent = bidsData.bids.length + '개 인증 매장';
+                if (quote.pc_title) document.getElementById('homeLiveSpec').textContent = quote.pc_title;
+            }
+        }
+    } catch (e) {
+        console.error('홈 입찰 로드 실패:', e);
+    }
+}
+
+/* ================= SHOPS ================= */
+
+async function loadShops() {
+    try {
+        const data = await apiCall('/shops');
+        const shops = data.shops;
+        const container = document.getElementById('shopsContent');
+        // info-box는 유지하고 그 뒤에 매장 카드 추가
+        const infoBox = container.querySelector('.info-box');
+        container.innerHTML = '';
+        container.appendChild(infoBox);
+        
+        if (shops.length === 0) {
+            container.innerHTML += '<p>등록된 매장이 없습니다.</p>';
+            return;
+        }
+        
+        container.innerHTML += shops.map(shop => `
+            <div class="shop-card">
+                <div class="shop-image">🖥️</div>
+                <div class="shop-body">
+                    <div class="shop-name">${shop.shop_name}</div>
+                    <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
+                    <div class="shop-tags">
+                        <span class="tag">PC 전문</span>
+                    </div>
+                    <div class="shop-actions">
+                        <button class="secondary-btn" onclick="go('chat')">💬 상담</button>
+                        <button class="small-primary" onclick="showToast('방문 예약 기능 준비 중')">방문 예약</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        showToast('매장을 불러오지 못했습니다.');
+    }
+}
+
+/* ================= BIDS ================= */
+
+// go('bid') 하기 전에 이 변수에 견적 id를 넣어두면 해당 견적의 입찰만 보여준다.
+let pendingBidQuoteId = null;
+
+async function loadBids() {
+    const container = document.getElementById('bidContent');
+    const quoteId = pendingBidQuoteId;
+    pendingBidQuoteId = null;
+
+    try {
+        let quote, bids;
+
+        if (quoteId) {
+            // 방금 등록한 내 견적의 입찰 현황
+            const data = await apiCall(`/quotes/${quoteId}`);
+            quote = data.quote;
+            bids = data.bids;
+        } else {
+            // 진행 중인 판매 입찰 예시를 보여준다 (전체 중 최신 1건)
+            const data = await apiCall('/quotes?status=bidding&type=sell');
+            if (data.quotes.length === 0) {
+                container.innerHTML = '<p>진행 중인 입찰이 없습니다.</p>';
+                return;
+            }
+            quote = data.quotes[0];
+            const bidsData = await apiCall(`/bids/quote/${quote.id}`);
+            bids = bidsData.bids;
+        }
+
+        let html = `
+            <div class="info-box">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                        <div style="font-size:12px;color:var(--sub)">${quote.title || '현재 최고 입찰가'}</div>
+                        <div style="font-size:30px;font-weight:900;margin-top:4px">${bids.length > 0 ? '₩' + Number(bids[0].amount).toLocaleString() : '없음'}</div>
+                    </div>
+                    <div class="timer">⏱ 진행 중</div>
+                </div>
+            </div>
+        `;
+        
+        if (bids.length > 0) {
+            html += bids.map((bid, i) => `
+                <div class="bid-card">
+                    <div class="rank">${['🥇','🥈','🥉'][i] || '•'}</div>
+                    <div class="bid-info">
+                        <strong>${bid.shop_name}</strong>
+                        <span>⭐ ${parseFloat(bid.rating || 0).toFixed(1)}</span>
+                    </div>
+                    <div class="bid-price">₩${Number(bid.amount).toLocaleString()}</div>
+                </div>
+            `).join('');
+        } else {
+            html += '<p>아직 입찰이 없습니다. 인증 매장들이 확인 후 입찰을 남기면 여기에 표시됩니다.</p>';
+        }
+        
+        html += '<button class="primary-btn" style="margin-top:10px" onclick="showToast(\'입찰 알림 신청이 완료되었습니다.\')">🔔 최고가 변경 알림 받기</button>';
+        container.innerHTML = html;
+    } catch (error) {
+        showToast('입찰 정보를 불러오지 못했습니다.');
+    }
+}
 
 /* ================= PC ANALYSIS ================= */
 
-function analyzePC() {
+let lastPCAnalysis = null; // AI 분석 결과 + 입력했던 스펙을 함께 보관
 
-    const cpu =
-        document.getElementById("cpu").value
-        || "Ryzen 7 5800X";
+async function analyzePC() {
+    const cpu = document.getElementById('cpu').value;
+    const gpu = document.getElementById('gpu').value;
+    const ram = document.getElementById('ram').value;
+    const storage = document.getElementById('storage').value;
+    
+    if (!cpu && !gpu) {
+        showToast('CPU 또는 GPU 정보를 입력해주세요.');
+        return;
+    }
 
-    const gpu =
-        document.getElementById("gpu").value
-        || "RTX 4070";
+    if (!requireLogin()) return;
+    
+    try {
+        const data = await apiCall('/ai/analyze-pc', 'POST', {
+            cpu, gpu, ram, storage,
+            condition_grade: 'good'
+        });
+        
+        const analysis = data.analysis;
+        lastPCAnalysis = { cpu, gpu, ram, storage, analysis };
 
-    document.getElementById("pcSpec")
-        .innerText = `${cpu} · ${gpu}`;
-
-    go("price");
-
+        document.getElementById('pcSpec').innerText = `${cpu || '미입력'} · ${gpu || '미입력'}`;
+        document.getElementById('aiConfidence').textContent = analysis.confidence + '%';
+        document.getElementById('aiPriceRange').textContent = 
+            `₩${analysis.priceRange.min.toLocaleString()} ~ ₩${analysis.priceRange.max.toLocaleString()}`;
+        
+        go('price');
+    } catch (error) {
+        showToast(error.message);
+    }
 }
 
+// AI 분석 결과를 바탕으로 실제 판매 견적(quote)을 등록하고 입찰 화면으로 이동
+async function submitSellQuote() {
+    if (!requireLogin()) return;
+
+    if (!lastPCAnalysis) {
+        showToast('먼저 AI 가격 분석을 진행해주세요.');
+        go('sell');
+        return;
+    }
+
+    const { cpu, gpu, ram, storage, analysis } = lastPCAnalysis;
+    const title = `${cpu || 'PC'} · ${gpu || ''} 판매 견적`.trim();
+
+    try {
+        const data = await apiCall('/quotes', 'POST', {
+            quote_type: 'sell',
+            title,
+            description: `CPU: ${cpu || '-'} / GPU: ${gpu || '-'} / RAM: ${ram || '-'} / SSD: ${storage || '-'}`,
+            budget_min: analysis.priceRange.min,
+            budget_max: analysis.priceRange.max
+        });
+
+        showToast('견적이 등록되었습니다. 매장 입찰을 기다려주세요!');
+        pendingBidQuoteId = data.quote.id;
+        go('bid');
+    } catch (error) {
+        showToast(error.message);
+    }
+}
 
 /* ================= PC USAGE ================= */
 
 function selectUsage(element) {
-
-    document
-        .querySelectorAll(".usage-card")
-        .forEach(card => {
-            card.classList.remove("active");
-        });
-
+    document.querySelectorAll(".usage-card").forEach(card => {
+        card.classList.remove("active");
+    });
     element.classList.add("active");
-
 }
-
 
 /* ================= BUDGET ================= */
 
 function updateBudget(value) {
-
-    document
-        .getElementById("budgetValue")
-        .innerText =
-            Number(value).toLocaleString();
-
+    document.getElementById("budgetValue").innerText = Number(value).toLocaleString();
 }
 
-
-/* ================= RECOMMEND ================= */
+/* ================= RECOMMEND / QUOTE ================= */
 
 function showRecommendation() {
-
     go("recommend");
-
 }
 
+async function requestQuote() {
+    if (!requireLogin()) return;
+    
+    const budget = parseInt(document.getElementById('budgetValue').innerText.replace(/,/g, ''));
+    const usage = document.querySelector('.usage-card.active strong')?.innerText || '게임용';
+    
+    try {
+        await apiCall('/quotes', 'POST', {
+            quote_type: 'buy',
+            title: `${usage} PC 견적 요청`,
+            description: `예산: ${budget.toLocaleString()}원`,
+            budget_min: budget - 200000,
+            budget_max: budget + 200000
+        });
+        showToast('견적 요청이 등록되었습니다!');
+    } catch (error) {
+        showToast(error.message);
+    }
+}
 
 /* ================= CHAT ================= */
 
-function sendMessage() {
+async function sendMessage() {
+    if (!requireLogin()) return;
 
-    const input =
-        document.getElementById("chatInput");
-
-    const text =
-        input.value.trim();
-
-    if(!text) return;
-
-    const container =
-        document.getElementById("chatMessages");
-
-    const userMessage =
-        document.createElement("div");
-
-    userMessage.className =
-        "message user-message";
-
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const container = document.getElementById("chatMessages");
+    
+    const userMessage = document.createElement("div");
+    userMessage.className = "message user-message";
     userMessage.innerText = text;
-
     container.appendChild(userMessage);
-
     input.value = "";
-
-    container.scrollTop =
-        container.scrollHeight;
-
-
-    setTimeout(() => {
-
-        const aiMessage =
-            document.createElement("div");
-
-        aiMessage.className =
-            "message ai-message";
-
-        aiMessage.innerHTML =
-            "문의 내용을 확인했습니다 😊<br><br>" +
-            "현재 MYCOM에서는 PC 조립, " +
-            "중고 판매, 견적 비교, 수리 및 " +
-            "주변 매장 연결을 도와드릴 수 있습니다.";
-
+    container.scrollTop = container.scrollHeight;
+    
+    try {
+        const data = await apiCall('/ai/chat', 'POST', { message: text });
+        const aiMessage = document.createElement("div");
+        aiMessage.className = "message ai-message";
+        aiMessage.innerText = data.response;
         container.appendChild(aiMessage);
-
-        container.scrollTop =
-            container.scrollHeight;
-
-    }, 700);
-
+        container.scrollTop = container.scrollHeight;
+    } catch (error) {
+        const aiMessage = document.createElement("div");
+        aiMessage.className = "message ai-message";
+        aiMessage.innerText = '죄송합니다. 오류가 발생했습니다: ' + error.message;
+        container.appendChild(aiMessage);
+        container.scrollTop = container.scrollHeight;
+    }
 }
 
+/* ================= MY PAGE ================= */
+
+async function loadMyPage() {
+    if (!currentUser) {
+        document.getElementById('profileName').textContent = '로그인이 필요합니다';
+        document.getElementById('statPoints').textContent = '0P';
+        document.getElementById('statTrades').textContent = '0건';
+        return;
+    }
+    
+    document.getElementById('profileName').textContent = `${currentUser.name}님 👋`;
+    
+    try {
+        const reservations = await apiCall('/reservations/my');
+        document.getElementById('statTrades').textContent = reservations.reservations.length + '건';
+    } catch (e) {
+        console.error('예약 내역 로드 실패:', e);
+    }
+}
+
+/* ================= MY QUOTES ================= */
+
+async function loadMyQuotes() {
+    const container = document.getElementById('myquotesContent');
+    if (!requireLogin()) {
+        container.innerHTML = '<p>로그인이 필요합니다.</p>';
+        return;
+    }
+
+    container.innerHTML = '<p>불러오는 중...</p>';
+
+    try {
+        const data = await apiCall(`/quotes?user_id=${currentUser.id}`);
+        if (data.quotes.length === 0) {
+            container.innerHTML = '<p>등록된 견적이 없습니다.</p>';
+            return;
+        }
+
+        container.innerHTML = data.quotes.map(q => `
+            <div class="info-box" style="margin-bottom:12px;cursor:pointer" onclick="pendingBidQuoteId='${q.id}';go('bid')">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <strong>${q.title}</strong>
+                    <span class="tag">${q.quote_type === 'sell' ? '판매' : '구매'}</span>
+                </div>
+                <p style="margin:6px 0 0;font-size:13px;color:var(--sub)">
+                    상태: ${q.status} · 입찰 ${q.bid_count || 0}건
+                </p>
+            </div>
+        `).join('');
+    } catch (error) {
+        container.innerHTML = '<p>견적을 불러오지 못했습니다.</p>';
+    }
+}
+
+/* ================= MY RESERVATIONS ================= */
+
+async function loadMyReservations() {
+    const container = document.getElementById('myreservationsContent');
+    if (!requireLogin()) {
+        container.innerHTML = '<p>로그인이 필요합니다.</p>';
+        return;
+    }
+
+    container.innerHTML = '<p>불러오는 중...</p>';
+
+    try {
+        const data = await apiCall('/reservations/my');
+        if (data.reservations.length === 0) {
+            container.innerHTML = '<p>예약 내역이 없습니다.</p>';
+            return;
+        }
+
+        container.innerHTML = data.reservations.map(r => `
+            <div class="info-box" style="margin-bottom:12px">
+                <strong>${r.shop_name}</strong>
+                <p style="margin:6px 0 0;font-size:13px;color:var(--sub)">
+                    ${r.reservation_date} ${r.reservation_time} · ${r.service_type}
+                </p>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--sub)">${r.address || ''}</p>
+                <span class="tag" style="margin-top:8px;display:inline-block">${r.status}</span>
+            </div>
+        `).join('');
+    } catch (error) {
+        container.innerHTML = '<p>예약 내역을 불러오지 못했습니다.</p>';
+    }
+}
 
 /* ================= TOAST ================= */
 
 function showToast(message) {
-
-    const toast =
-        document.getElementById("toast");
-
+    const toast = document.getElementById("toast");
     toast.innerText = message;
-
     toast.classList.add("show");
-
     setTimeout(() => {
-
         toast.classList.remove("show");
-
     }, 2500);
-
 }
+
+/* ================= INIT ================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    loadHomeData();
+});
 
 </script>
 

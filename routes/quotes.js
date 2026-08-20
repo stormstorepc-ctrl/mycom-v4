@@ -96,7 +96,10 @@ router.get('/:id', async (req, res) => {
             `SELECT q.*, 
                     u.name as user_name,
                     u.email as user_email,
-                    p.*
+                    p.title as pc_title, p.cpu, p.gpu, p.ram, p.storage,
+                    p.motherboard, p.power_supply, p.cooler, p.pc_case,
+                    p.condition_grade, p.purchase_date, p.warranty_remaining,
+                    p.images as pc_images
              FROM quotes q
              JOIN users u ON u.id = q.user_id
              LEFT JOIN pcs p ON p.id = q.pc_id
