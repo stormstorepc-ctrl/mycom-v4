@@ -56,16 +56,11 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
 });
 
-const { pool } = require('./database/init'); // 만약 pool을 가져와야 한다면 이 경로를 확인해주세요
-
+const PORT = process.env.PORT || 3000;
 async function startServer() {
     try {
         await initDatabase();
         console.log('✅ 데이터베이스 연결 완료');
-
-        // 👇 여기에 딱 한 번만 실행될 권한 변경 코드를 추가합니다!
-        const { pool } = require('./database/init'); // 혹은 이미 선언된 pool 객체 사용
-
         initSocket(server);
         console.log('✅ Socket.IO 초기화 완료');
         server.listen(PORT, () => console.log(`🚀 MYCOM V4 서버가 포트 ${PORT}에서 실행 중입니다.`));
