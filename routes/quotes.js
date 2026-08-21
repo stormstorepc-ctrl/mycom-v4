@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../services/database');
-const { authenticate, authorize } = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/', authenticate, async (req, res) => {
@@ -15,11 +15,15 @@ router.post('/', authenticate, async (req, res) => {
     }
     const finalDescription=part?JSON.stringify({sale_kind:'part',category:part.category||'',model:part.model||'',description:part.description||'',images:Array.isArray(part.images)?part.images:[]}):description;
     const result=await db.query(`INSERT INTO quotes(user_id,pc_id,quote_type,title,description,budget_min,budget_max,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,[req.user.id,finalPcId,quote_type,title,finalDescription,budget_min||null,budget_max||null,expires_at||null]);
-    res.status(201).json({message:'판매 입찰 요청이 등록되었습니다.',quote:result.rows[0]});
+    res.status(201).json({message:'견적 요청이 등록되었습니다.',quote:result.rows[0]});
   }catch(error){console.error('견적 요청 생성 오류:',error);res.status(500).json({error:'견적 요청 생성 중 오류가 발생했습니다.'});}
 });
 
-router.get('/',async(req,res)=>{try{const{status,type,user_id}=req.query;let query=`SELECT q.*,u.name user_name,p.title pc_title,p.cpu,p.gpu,p.ram,p.storage,COUNT(DISTINCT b.id) bid_count,MIN(b.amount) min_bid,MAX(b.amount) max_bid FROM quotes q JOIN users u ON u.id=q.user_id LEFT JOIN pcs p ON p.id=q.pc_id LEFT JOIN bids b ON b.quote_id=q.id WHERE 1=1`;const params=[];if(status){params.push(status);query+=` AND q.status=$${params.length}`}if(type){params.push(type);query+=` AND q.quote_type=$${params.length}`}if(user_id){params.push(user_id);query+=` AND q.user_id=$${params.length}`}query+=` GROUP BY q.id,u.name,p.title,p.cpu,p.gpu,p.ram,p.storage ORDER BY q.created_at DESC`;res.json({quotes:(await db.query(query,params)).rows})}catch(e){console.error(e);res.status(500).json({error:'견적 목록 조회 중 오류가 발생했습니다.'})}});
+// 내 견적은 로그인한 본인만 조회합니다.
+router.get('/my', authenticate, async(req,res)=>{try{const q=`SELECT q.*,COUNT(DISTINCT b.id)::int bid_count,MIN(b.amount) min_bid,MAX(b.amount) max_bid FROM quotes q LEFT JOIN bids b ON b.quote_id=q.id WHERE q.user_id=$1 GROUP BY q.id ORDER BY q.created_at DESC`;res.json({quotes:(await db.query(q,[req.user.id])).rows})}catch(e){console.error(e);res.status(500).json({error:'내 견적 조회 중 오류가 발생했습니다.'})}});
+
+// 공개 목록에는 특정 회원 ID로 필터링하는 기능을 제공하지 않습니다.
+router.get('/',async(req,res)=>{try{const{status,type}=req.query;let query=`SELECT q.*,u.name user_name,p.title pc_title,p.cpu,p.gpu,p.ram,p.storage,COUNT(DISTINCT b.id) bid_count,MIN(b.amount) min_bid,MAX(b.amount) max_bid FROM quotes q JOIN users u ON u.id=q.user_id LEFT JOIN pcs p ON p.id=q.pc_id LEFT JOIN bids b ON b.quote_id=q.id WHERE 1=1`;const params=[];if(status){params.push(status);query+=` AND q.status=$${params.length}`}if(type){params.push(type);query+=` AND q.quote_type=$${params.length}`}query+=` GROUP BY q.id,u.name,p.title,p.cpu,p.gpu,p.ram,p.storage ORDER BY q.created_at DESC`;res.json({quotes:(await db.query(query,params)).rows})}catch(e){console.error(e);res.status(500).json({error:'견적 목록 조회 중 오류가 발생했습니다.'})}});
 
 router.get('/:id',async(req,res)=>{try{const r=await db.query(`SELECT q.*,u.name user_name,u.email user_email,p.title pc_title,p.cpu,p.gpu,p.ram,p.storage,p.motherboard,p.power_supply,p.cooler,p.pc_case,p.condition_grade,p.purchase_date,p.warranty_remaining,p.images pc_images FROM quotes q JOIN users u ON u.id=q.user_id LEFT JOIN pcs p ON p.id=q.pc_id WHERE q.id=$1`,[req.params.id]);if(!r.rows.length)return res.status(404).json({error:'견적을 찾을 수 없습니다.'});const b=await db.query(`SELECT b.*,s.shop_name,s.rating,s.address FROM bids b JOIN shops s ON s.id=b.shop_id WHERE b.quote_id=$1 ORDER BY b.amount ASC`,[req.params.id]);res.json({quote:r.rows[0],bids:b.rows})}catch(e){res.status(500).json({error:'견적 상세 조회 중 오류가 발생했습니다.'})}});
 
