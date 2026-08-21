@@ -1198,7 +1198,7 @@ placeholder="PC 조립, 수리, 중고판매를 검색하세요"
 <span>AI 상담</span>
 </div>
 
-<div class="category" onclick="showToast('출장 서비스는 준비 중입니다.')">
+<div class="category" onclick="window.location.href='/ai.html?type=visit'">
 <div class="category-icon">🚗</div>
 <span>출장 서비스</span>
 </div>
@@ -2292,6 +2292,11 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 /* ================= PAGE ================= */
 
 function go(id, nav) {
+    // 홈 메뉴에서만 AI 상담으로 연결합니다. 기존 화면/디자인은 그대로 유지합니다.
+    if (!nav && id === "build") { window.location.href = "/ai.html?type=quote"; return; }
+    if (!nav && id === "sell") { window.location.href = "/ai.html?type=sell"; return; }
+    if (!nav && id === "chat") { window.location.href = "/ai.html?type=general"; return; }
+
     document.querySelectorAll(".screen").forEach(screen => {
         screen.classList.remove("active");
     });
