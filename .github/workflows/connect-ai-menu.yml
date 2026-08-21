@@ -1,0 +1,50 @@
+name: Connect MYCOM AI menus
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-ai-menu:
+    if: "!contains(github.event.head_commit.message, '[ai-menu]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect home menus without changing design
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('public/index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''function go(id, nav) {\n    document.querySelectorAll(".screen").forEach(screen => {'''
+          new = '''function go(id, nav) {\n    // 홈 메뉴에서만 AI 상담으로 연결합니다. 기존 화면/디자인은 그대로 유지합니다.\n    if (!nav && id === "build") { window.location.href = "/ai.html?type=quote"; return; }\n    if (!nav && id === "sell") { window.location.href = "/ai.html?type=sell"; return; }\n    if (!nav && id === "chat") { window.location.href = "/ai.html?type=general"; return; }\n\n    document.querySelectorAll(".screen").forEach(screen => {'''
+
+          if old in s and '홈 메뉴에서만 AI 상담으로 연결합니다' not in s:
+              p.write_text(s.replace(old, new, 1), encoding='utf-8')
+
+          # 기존 '출장 서비스' 메뉴를 방문예약 AI 상담으로 연결
+          s = p.read_text(encoding='utf-8')
+          old2 = '''<div class="category" onclick="showToast('출장 서비스는 준비 중입니다.')">'''
+          new2 = '''<div class="category" onclick="window.location.href='/ai.html?type=visit'">'''
+          if old2 in s:
+              p.write_text(s.replace(old2, new2, 1), encoding='utf-8')
+
+      - name: Commit patched menu
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/index.html
+          if git diff --cached --quiet; then
+            echo "No menu changes needed"
+            exit 0
+          fi
+          git commit -m "feat: connect MYCOM menus to AI 상담 [ai-menu]"
+          git push
