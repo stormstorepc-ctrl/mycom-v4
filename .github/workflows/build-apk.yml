@@ -1,27 +1,73 @@
-name: Build MYCOM APK
+name: Build and Release MYCOM APK
+
 on:
   push:
     paths:
       - 'android/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10'
+
+      - name: Read app version
+        id: version
+        shell: bash
+        run: |
+          VERSION_CODE=$(grep -o "versionCode [0-9]*" android/app/build.gradle | head -1 | awk '{print $2}')
+          VERSION_NAME=$(grep -o "versionName '[^']*'" android/app/build.gradle | head -1 | sed "s/versionName '//;s/'//")
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "MYCOM version: $VERSION_NAME ($VERSION_CODE)"
+
       - name: Build APK
         working-directory: android
         run: gradle assembleDebug --no-daemon
-      - name: Upload APK
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MYCOM-APK
+          name: MYCOM-APK-${{ steps.version.outputs.version_name }}
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.version.outputs.version_name }}"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" android/app/build/outputs/apk/debug/app-debug.apk --title "MYCOM ${{ steps.version.outputs.version_name }}" --notes "MYCOM ${{ steps.version.outputs.version_name }} 자동 업데이트 배포본"
+
+      - name: Update auto-update manifest
+        shell: bash
+        run: |
+          VERSION_CODE="${{ steps.version.outputs.version_code }}"
+          VERSION_NAME="${{ steps.version.outputs.version_name }}"
+          cat > update.json <<EOF
+          {
+            "versionCode": $VERSION_CODE,
+            "versionName": "$VERSION_NAME",
+            "apkUrl": "https://github.com/stormstorepc-ctrl/mycom-v4/releases/download/v$VERSION_NAME/app-debug.apk",
+            "mandatory": false,
+            "message": "MYCOM $VERSION_NAME 업데이트가 있습니다. 최신 기능과 오류 수정이 적용되었습니다."
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add update.json
+          git diff --cached --quiet || git commit -m "chore: update MYCOM update manifest to $VERSION_NAME"
+          git push
