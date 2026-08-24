@@ -1,0 +1,68 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM | 방문 예약 상담</title><style>
+body{margin:0;background:#f6f7f9;color:#202124;font-family:Arial,sans-serif}
+.wrap{max-width:640px;margin:auto;padding:20px}
+.top{background:#fff;padding:18px;border-radius:18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:20px;font-weight:800;color:#00a878}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 20px #0000000a}
+.shop-name{font-size:19px;font-weight:800}
+.meta{font-size:13px;color:#666;margin-top:6px;line-height:1.5}
+label{display:block;font-weight:700;margin:14px 0 7px}
+.input,select,textarea{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:12px;padding:12px;background:#fafafa;font-size:15px}
+textarea{min-height:110px;resize:vertical}
+button{border:0;border-radius:10px;padding:13px 15px;background:#00a878;color:#fff;font-weight:700;cursor:pointer;font-size:15px}
+.ghost{background:#eef7f4;color:#087657}
+.btn-row{display:flex;gap:8px;margin-top:16px}
+.btn-row button{flex:1}
+.msg{margin-top:12px;font-size:13px;font-weight:700}
+.ok{color:#087657}.err{color:#e03131}
+.done{text-align:center;padding:10px 0}
+.done .icon{font-size:46px}
+</style></head><body>
+<main class="wrap">
+<header class="top"><div><div class="brand">MYCOM</div><div>📅 방문 예약 상담</div></div><button class="ghost" onclick="history.back()">← 뒤로</button></header>
+<div id="shopCard" class="card">매장 정보를 불러오는 중...</div>
+<section class="card" id="formCard">
+<label for="service_type">상담 종류</label>
+<select id="service_type" class="input">
+<option value="방문 상담">방문 상담</option>
+<option value="PC 조립">PC 조립</option>
+<option value="PC 수리/점검">PC 수리/점검</option>
+<option value="업그레이드">업그레이드</option>
+<option value="중고PC 매입 상담">중고PC 매입 상담</option>
+</select>
+<label for="date">날짜</label>
+<input type="date" id="date" class="input">
+<label for="time">시간</label>
+<select id="time" class="input"></select>
+<label for="notes">요청 내용 (선택)</label>
+<textarea id="notes" placeholder="예) 게이밍PC 조립 상담받고 싶어요"></textarea>
+<div class="btn-row"><button type="button" onclick="submitReserve()">예약 신청</button></div>
+<p id="msg" class="msg"></p>
+</section>
+</main>
+<script>
+(function(){
+var q=new URLSearchParams(location.search),shopId=q.get('shop');
+var shopCard=document.getElementById('shopCard');
+var msg=document.getElementById('msg');
+function token(){return localStorage.getItem('mycom_token')||localStorage.getItem('token')||''}
+var t=document.getElementById('time'),opts='';
+for(var h=10;h<=19;h++){['00','30'].forEach(function(mm){if(h===19&&mm==='30')return;var v=h+':'+mm;opts+='<option value="'+v+'">'+v+'</option>'})}
+t.innerHTML=opts;
+var d=document.getElementById('date'),pad=function(n){return (n<10?'0':'')+n},fmt=function(x){return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate())};
+var now=new Date();d.min=fmt(now);d.value=fmt(now);var max=new Date();max.setDate(max.getDate()+30);d.max=fmt(max);
+if(!shopId){shopCard.innerHTML='❌ 매장 정보가 없습니다. 매장을 먼저 선택해주세요.';document.getElementById('formCard').style.display='none';return}
+fetch('/api/shops/'+encodeURIComponent(shopId),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('매장을 찾을 수 없습니다.');return r.json()}).then(function(x){var s=x.shop||{};shopCard.innerHTML='<div class="shop-name">🏪 '+(s.shop_name||'MYCOM 업체')+'</div><div class="meta">'+(s.address||'')+' '+(s.detail_address||'')+'<br>'+(s.phone||'')+'</div>'}).catch(function(e){shopCard.innerHTML='❌ '+e.message;document.getElementById('formCard').style.display='none'});
+window.submitReserve=function(){
+ msg.className='msg';msg.textContent='';
+ if(!token()){alert('로그인이 필요합니다.');location.href='/';return}
+ var body={shop_id:shopId,service_type:document.getElementById('service_type').value,reservation_date:d.value,reservation_time:t.value,notes:document.getElementById('notes').value};
+ if(!body.reservation_date||!body.reservation_time){msg.className='msg err';msg.textContent='날짜와 시간을 선택해주세요.';return}
+ fetch('/api/reservations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(x){if(r.status===401)throw new Error('로그인이 필요합니다. 로그인 후 다시 시도해주세요.');if(!r.ok)throw new Error(x.error||'예약에 실패했습니다.');showDone(body)})}).catch(function(e){msg.className='msg err';msg.textContent=e.message});
+};
+function showDone(b){
+ document.getElementById('formCard').innerHTML='<div class="done"><div class="icon">✅</div><h2>예약이 접수되었습니다</h2><p class="meta">'+b.reservation_date+' '+b.reservation_time+' · '+b.service_type+'</p><p class="meta">업체 확인 후 예약이 확정됩니다.</p><div class="btn-row"><button class="ghost" onclick="location.href='+"'/'"+'">홈으로</button><button onclick="location.href='+"'/my-activity.html?tab=reservations'"+'">내 예약 확인</button></div></div>';
+}
+})();
+</script>
+</body></html>
