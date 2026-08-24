@@ -63,6 +63,10 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setAllowFileAccess(true);
         s.setMediaPlaybackRequiresUserGesture(false);
+        // APK가 오래된 WebView 캐시를 사용하지 않고 항상 최신 MYCOM 웹앱을 불러오도록 한다.
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.clearCache(true);
+        webView.clearHistory();
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
@@ -83,7 +87,7 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) { return false; }
         });
-        webView.loadUrl(HOME);
+        webView.loadUrl(HOME + "?apk=4.0.3&t=" + System.currentTimeMillis());
         checkForUpdates();
     }
 
