@@ -50,7 +50,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="v${{ steps.version.outputs.version_name }}"
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" android/app/build/outputs/apk/debug/app-debug.apk --title "MYCOM ${{ steps.version.outputs.version_name }}" --notes "MYCOM ${{ steps.version.outputs.version_name }} 자동 업데이트 배포본"
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" --clobber
+          else
+            gh release create "$TAG" "$APK" --title "MYCOM ${{ steps.version.outputs.version_name }}" --notes "MYCOM ${{ steps.version.outputs.version_name }} 자동 업데이트 배포본"
+          fi
 
       - name: Update auto-update manifest
         shell: bash
