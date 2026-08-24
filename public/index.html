@@ -2470,6 +2470,16 @@ function logout() {
 }
 
 /* ================= HOME DATA ================= */
+function shopImgHtml(shop) {
+    var arr = shop.shop_images;
+    if (typeof arr === 'string') {
+        try { arr = JSON.parse(arr); } catch (e) { arr = arr.split(','); }
+    }
+    if (!Array.isArray(arr)) arr = [];
+    var src = String(shop.cover_image || shop.image_url || shop.thumbnail || arr[0] || '').trim();
+    if (!src) return '🖥️';
+    return '<img src="' + src.replace(/"/g, '') + '" alt="매장 사진" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML=\'🖥️\'">';
+}
 
 async function loadHomeData() {
     // 매장 목록 로드
@@ -2483,7 +2493,7 @@ async function loadHomeData() {
         }
         container.innerHTML = shops.map(shop => `
             <div class="shop-card">
-                <div class="shop-image">🖥️</div>
+              <div class="shop-image">${shopImgHtml(shop)}</div>
                 <div class="shop-body">
                     <div class="shop-name-row">
                         <div class="shop-name">${shop.shop_name}</div>
@@ -2540,7 +2550,7 @@ async function loadShops() {
         
         container.innerHTML += shops.map(shop => `
             <div class="shop-card">
-                <div class="shop-image">🖥️</div>
+                <div class="shop-image">${shopImgHtml(shop)}</div>
                 <div class="shop-body">
                     <div class="shop-name">${shop.shop_name}</div>
                     <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
