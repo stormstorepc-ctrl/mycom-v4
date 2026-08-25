@@ -2511,7 +2511,7 @@ async function loadHomeData() {
        // 실시간 입찰 슬라이드 (대기+진행 판매글 순환 · 제품 사진 표시)
     try {
         const data = await apiCall('/quotes?type=sell');
-        const list = (data.quotes || []).filter(q => ['open','bidding'].includes(q.status)).slice(0, 5);
+        const list = (data.quotes || []).filter(q => ['open','bidding'].includes(q.status) && (!q.expires_at || new Date(q.expires_at).getTime() > Date.now())).slice(0, 5);
         if (list.length > 0) {
             let idx = 0;
             const pickImage = q => {
