@@ -2508,17 +2508,21 @@ async function loadHomeData() {
     } catch (e) {
         console.error('홈 매장 로드 실패:', e);
     }
-    // 실시간 입찰 슬라이드 (4.5초 자동 전환 + 제품 사진을 배너 오른쪽에 표시)
+       // 실시간 입찰 슬라이드 (대기+진행 판매글 순환 · 제품 사진 표시)
     try {
-        const data = await apiCall('/quotes?status=bidding&type=sell');
-        const list = (data.quotes || []).slice(0, 5);
+        const data = await apiCall('/quotes?type=sell');
+        const list = (data.quotes || []).filter(q => ['open','bidding'].includes(q.status)).slice(0, 5);
         if (list.length > 0) {
             let idx = 0;
             const pickImage = q => {
-                let arr = q.images || q.photos || q.photo_urls;
+                let arr = q.pc_images || q.images || [];
                 if (typeof arr === 'string') { try { arr = JSON.parse(arr); } catch (e) { arr = arr.split(','); } }
-                if (!Array.isArray(arr)) arr = [];
-                return String(q.image_url || q.image || q.photo || arr[0] || '').trim().replace(/'/g, '');
+                if (Array.isArray(arr) && arr[0]) return String(arr[0]).replace(/'/g, '');
+                try {
+                    const d = JSON.parse(q.description || '{}');
+                    if (d && Array.isArray(d.images) && d.images[0]) return String(d.images[0]).replace(/'/g, '');
+                } catch (e) {}
+                return '';
             };
             const showQuote = async (q) => {
                 try {
@@ -2530,13 +2534,19 @@ async function loadHomeData() {
                     const card = priceEl.parentElement;
                     if (card) { card.style.transition = 'opacity .25s'; card.style.opacity = '0'; }
                     setTimeout(() => {
-                        priceEl.textContent = '₩' + Number((bidsData.bids[0] || {}).amount || 0).toLocaleString();
-                        countEl.textContent = (bidsData.bids.length || 0) + '개 인증 매장';
+                        const bids = bidsData.bids || [];
+                        if (bids.length) {
+                            priceEl.textContent = '₩' + Number(bids[0].amount || 0).toLocaleString();
+                            countEl.textContent = bids.length + '개 인증 매장';
+                        } else {
+                            priceEl.textContent = q.budget_max ? '희망가 ₩' + Number(q.budget_max).toLocaleString() : '입찰 대기 중';
+                            countEl.textContent = '첫 입찰을 기다리는 중';
+                        }
                         specEl.textContent = q.pc_title || q.title || '';
                         const img = pickImage(q);
                         if (card) {
                             if (img) {
-                                card.style.backgroundImage = `linear-gradient(90deg, rgba(15,19,26,.97) 0%, rgba(15,19,26,.9) 45%, rgba(15,19,26,.45) 75%, rgba(15,19,26,.1) 100%), url('${img}')`;
+                                card.style.backgroundImage = `linear-gradient(90deg, rgba(15,19,26,.97) 0%, rgba(15,19,26,.92) 45%, rgba(15,19,26,.5) 75%, rgba(15,19,26,.15) 100%), url('${img}')`;
                                 card.style.backgroundSize = 'cover';
                                 card.style.backgroundPosition = 'center right';
                                 card.style.backgroundRepeat = 'no-repeat';
@@ -2554,6 +2564,7 @@ async function loadHomeData() {
     } catch (e) {
         console.error('홈 입찰 로드 실패:', e);
     }
+
 }
 
 /* ================= SHOPS ================= */
