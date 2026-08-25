@@ -2623,14 +2623,15 @@ async function loadBids() {
             const data = await apiCall(`/quotes/${quoteId}`);
             quote = data.quote;
             bids = data.bids;
-        } else {
-            // 진행 중인 판매 입찰 예시를 보여준다 (전체 중 최신 1건)
-            const data = await apiCall('/quotes?status=bidding&type=sell');
-            if (data.quotes.length === 0) {
+              } else {
+            // 진행 중인 판매 입찰 예시를 보여준다 (대기+진행 중 최신 1건)
+            const data = await apiCall('/quotes?type=sell');
+            const list = (data.quotes || []).filter(q => ['open','bidding'].includes(q.status) && (!q.expires_at || new Date(q.expires_at).getTime() > Date.now()));
+            if (list.length === 0) {
                 container.innerHTML = '<p>진행 중인 입찰이 없습니다.</p>';
                 return;
             }
-            quote = data.quotes[0];
+            quote = list[0];
             const bidsData = await apiCall(`/bids/quote/${quote.id}`);
             bids = bidsData.bids;
         }
