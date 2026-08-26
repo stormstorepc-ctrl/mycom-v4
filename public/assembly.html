@@ -1,61 +1,50 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM | PC 조립 대행</title><style>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM | PC 조립 대행 의뢰</title><style>
 body{margin:0;background:#f6f7f9;color:#202124;font-family:Pretendard,Arial,sans-serif}
-.wrap{max-width:720px;margin:auto;padding-bottom:60px}
-.hero{background:linear-gradient(135deg,#17202a,#0b3d33);color:#fff;padding:30px 22px;border-radius:0 0 26px 26px;position:relative;overflow:hidden;min-height:150px}
+.wrap{max-width:720px;margin:auto;padding-bottom:80px}
+.hero{background:linear-gradient(135deg,#17202a,#0b3d33);color:#fff;padding:30px 22px;border-radius:0 0 26px 26px;position:relative;overflow:hidden;min-height:130px}
 .hero h1{margin:0;font-size:25px;letter-spacing:-.5px}
 .hero p{opacity:.85;font-size:14px;line-height:1.65;margin:10px 0 0}
 .hero .tagline{display:inline-block;background:#12b886;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:900;margin-bottom:12px}
-.herobg{position:absolute;right:-20px;top:0;bottom:0;width:55%;background-size:cover;background-position:center;opacity:.55;-webkit-mask-image:linear-gradient(90deg,transparent,#000);mask-image:linear-gradient(90deg,transparent,#000)}
 .body{padding:20px 16px}
 .card{background:#fff;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #0000000b}
 .card h3{margin:0 0 12px;font-size:17px}
 .svc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .svc div{background:#f6f9f8;border-radius:14px;padding:13px;font-size:13px;font-weight:800;line-height:1.5}
 .svc span{display:block;font-size:11px;color:#6b7684;font-weight:600;margin-top:4px}
-.step{display:flex;gap:12px;margin:12px 0;font-size:14px;line-height:1.5}
-.step b{flex:none;width:28px;height:28px;border-radius:50%;background:#12b886;color:#fff;display:grid;place-items:center;font-size:13px}
+.step{display:flex;gap:12px;margin:12px 0;font-size:14px;line-height:1.6;align-items:flex-start}
+.step .num{flex:none;width:26px;height:26px;border-radius:50%;background:#12b886;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:900}
+.step .txt b{color:#087f5b}
 .notice{font-size:12px;color:#8a949f;line-height:1.7;background:#f8f9fa;border-radius:14px;padding:14px}
-.shop{display:flex;gap:13px;align-items:center;background:#fff;border-radius:18px;padding:13px;margin-bottom:11px;box-shadow:0 4px 16px #00000009}
-.shop .ph{flex:none;width:74px;height:74px;border-radius:14px;background:#eef1f3;overflow:hidden;display:grid;place-items:center;font-size:28px}
+label{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}
+.input,select,textarea{width:100%;box-sizing:border-box;border:1px solid #dee2e6;border-radius:12px;padding:13px;font-size:15px;background:#fff;font-family:inherit}
+textarea{min-height:90px;resize:vertical}
+.shop{display:flex;gap:13px;align-items:center;background:#fff;border-radius:18px;padding:13px;margin-bottom:11px;box-shadow:0 4px 16px #00000009;border:2.5px solid transparent;cursor:pointer;transition:border-color .15s}
+.shop.sel{border-color:#12b886;box-shadow:0 6px 20px #12b88622}
+.shop .ph{flex:none;width:70px;height:70px;border-radius:14px;background:#eef1f3;overflow:hidden;display:grid;place-items:center;font-size:26px}
 .shop .ph img{width:100%;height:100%;object-fit:cover}
 .shop .info{flex:1;min-width:0}
 .shop .nm{font-weight:900;font-size:15px}
+.shop .nm .ck{display:none;color:#12b886}
+.shop.sel .ck{display:inline}
 .shop .mt{font-size:12px;color:#6b7684;margin-top:3px}
 .shop .rt{font-size:12px;color:#f08c00;font-weight:800;margin-top:3px}
-.btn{border:0;border-radius:12px;padding:11px 13px;background:#12b886;color:#fff;font-weight:900;cursor:pointer;font-size:13px;white-space:nowrap}
-.btn.ghost{background:#eef7f4;color:#087657}
+.submit{width:100%;padding:17px;border:0;border-radius:16px;background:#12b886;color:#fff;font-weight:900;font-size:17px;cursor:pointer}
+.msg{margin-top:10px;font-size:13px;font-weight:800;color:#c92a2a}
 .back{border:0;background:#ffffff22;color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}
 .empty{padding:40px 18px;text-align:center;color:#6b7684;font-size:14px}
+.done{text-align:center;padding:14px 4px}
+.done .icon{font-size:50px}
+.done .sum{background:#f6f9f8;border-radius:14px;padding:14px;margin:14px 0;font-size:14px;line-height:1.8;text-align:left}
+.btnrow{display:flex;gap:8px}
+.btnrow button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:900;cursor:pointer;font-size:14px}
+.btnrow .g{background:#eef7f4;color:#087657}.btnrow .p{background:#12b886;color:#fff}
 </style></head><body>
 <div class="hero"><button class="back" onclick="history.back()">← 뒤로</button>
 <div style="margin-top:14px"><span class="tagline">🔧 인증 매장 전문가 조립</span>
-<h1>PC 조립 대행</h1>
-<p>직접 구매한 부품을 가장 가까운 인증 매장에서<br>꼼꼼하게 조립해드립니다.</p></div>
-<div class="herobg" id="heroBg"></div></div>
+<h1>PC 조립 대행 의뢰</h1>
+<p>부품 정보 적기 → 매장 선택 → 날짜·시간 선택 → 의뢰 완료!</p></div></div>
 <div class="body">
 <section class="card"><h3>✨ 이런 걸 해드립니다</h3>
 <div class="svc"><div>🔩 전수 조립<span>부품 장착 + 마무리 조립</span></div><div>🧹 케이블 정리<span>내부 선정리 깔끔하게</span></div><div>💿 윈도우 설치<span>OS + 드라이버 세팅</span></div><div>✅ 안정화 테스트<span>출고 전 부하·발열 점검</span></div></div></section>
 <section class="card"><h3>📋 진행 순서</h3>
-<div class="step"><b>1</b><div>아래에서 가까운 <b style="color:#087f5b">인증 매장</b>을 고르고 의뢰합니다.</div></div>
-<div class="step"><b>2</b><div>매장과 상담 후 부품을 매장으로 가져가거나 배송합니다.</div></div>
-<div class="step"><b>3</b><div>전문가가 조립·설치·테스트까지 마칩니다.</div></div>
-<div class="step"><b>4</b><div>완성된 PC를 픽업하고 후기를 남겨주세요!</div></div></section>
-<section class="card" style="background:transparent;box-shadow:none;padding:0 4px"><h3 style="margin:0 0 14px">🏪 조립대행 맡기기 — 가까운 인증 매장</h3><div id="shopList"><div class="empty">가까운 매장을 찾는 중입니다…</div></div></section>
-<div class="notice">※ 조립 비용은 매장과 부품 구성에 따라 다릅니다. 의뢰 시 매장이 안내해드립니다.<br>※ 부품은 포함되지 않으며, 부품 구매가 필요하면 매장에 함께 문의하세요.</div>
-</div>
-<script>
-(function(){
-var list=document.getElementById('shopList');
-var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
-fetch('/api/images/featured/menu',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(d){var imgs=d&&d.images||[];var m=imgs.find(function(x){return String(x.title||'').replace(/\s+/g,'').indexOf('조립대행')>-1});if(m&&m.image_url){var h=document.getElementById('heroBg');h.style.backgroundImage='url('+m.image_url+')'}}).catch(function(){});
-function photo(s){var arr=s.shop_images;if(typeof arr==='string'){try{arr=JSON.parse(arr)}catch(e){arr=[]}}if(!Array.isArray(arr))arr=[];return String(s.cover_image||arr[0]||'').trim()}
-function render(shops){
- if(!shops.length){list.innerHTML='<div class="empty">주변 승인 매장이 아직 없습니다.<br><br><button class="btn" onclick="location.href=\'/ai.html?type=assembly\'">AI에게 조립 상담받기</button></div>';return}
- list.innerHTML=shops.map(function(s){var img=photo(s);return '<div class="shop"><div class="ph">'+(img?'<img src="'+img.replace(/"/g,'')+'" alt="">':'🏪')+'</div><div class="info"><div class="nm">'+esc(s.shop_name)+'</div><div class="mt">'+esc(s.address||'')+'</div><div class="rt">⭐ '+Number(s.avg_rating||s.rating||0).toFixed(1)+' · 후기 '+(s.review_count||0)+(s.distance!=null?' · '+Number(s.distance).toFixed(1)+'km':'')+'</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn" onclick="location.href=\'/reserve.html?shop='+s.id+'&type=assembly\'">의뢰하기</button><button class="btn ghost" onclick="location.href=\'/shop.html?id='+s.id+'\'">정보</button></div></div>'}).join('');
-}
-function fallback(){fetch('/api/shops?radius=100&sort=rating',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){render(d.shops||[])}).catch(function(){render([])})}
-function nearby(lat,lon){fetch('/api/shops?latitude='+lat+'&longitude='+lon+'&radius=40&sort=distance',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){d.shops&&d.shops.length?render(d.shops):fallback()}).catch(fallback)}
-if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){nearby(p.coords.latitude,p.coords.longitude)},fallback,{maximumAge:300000,timeout:6000})}else{fallback()}
-})();
-</script>
-</body></html>
+<div class="step"><span class="num">1</span><span class="txt">아래에 <b>부품 정보</b>를 적어
