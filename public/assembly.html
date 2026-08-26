@@ -29,9 +29,10 @@ textarea{min-height:90px;resize:vertical}
 .shop .mt{font-size:12px;color:#6b7684;margin-top:3px}
 .shop .rt{font-size:12px;color:#f08c00;font-weight:800;margin-top:3px}
 .submit{width:100%;padding:17px;border:0;border-radius:16px;background:#12b886;color:#fff;font-weight:900;font-size:17px;cursor:pointer}
+.aiBtn{width:100%;margin-top:10px;padding:15px;border:2px dashed #12b886;border-radius:16px;background:#f2fdf9;color:#0b7d5c;font-weight:900;font-size:15px;cursor:pointer}
 .msg{margin-top:10px;font-size:13px;font-weight:800;color:#c92a2a}
 .back{border:0;background:#ffffff22;color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}
-.empty{padding:40px 18px;text-align:center;color:#6b7684;font-size:14px}
+.empty{padding:30px 18px;text-align:center;color:#6b7684;font-size:14px}
 .done{text-align:center;padding:14px 4px}
 .done .icon{font-size:50px}
 .done .sum{background:#f6f9f8;border-radius:14px;padding:14px;margin:14px 0;font-size:14px;line-height:1.8;text-align:left}
@@ -71,6 +72,7 @@ textarea{min-height:90px;resize:vertical}
 
 <button class="submit" id="submitBtn">🚀 조립대행 의뢰 보내기</button>
 <div class="msg" id="msg"></div>
+<button class="aiBtn" onclick="location.href='/ai.html?type=assembly'">💬 매장이 안 보이거나 고민되면, AI에게 조립 상담받기</button>
 </div>
 <script>
 (function(){
@@ -86,11 +88,12 @@ var d=document.getElementById('date'),pad=function(n){return (n<10?'0':'')+n},fm
 var now=new Date();d.min=fmt(now);d.value=fmt(now);var mx=new Date();mx.setDate(mx.getDate()+30);d.max=fmt(mx);
 function photo(s){var arr=s.shop_images;if(typeof arr==='string'){try{arr=JSON.parse(arr)}catch(e){arr=[]}}if(!Array.isArray(arr))arr=[];return String(s.cover_image||arr[0]||'').trim()}
 function render(){
- if(!shops.length){list.innerHTML='<div class="empty">주변 승인 매장이 아직 없습니다.<br><br><button class="submit" style="padding:13px" onclick="location.href=\'/ai.html?type=assembly\'">AI에게 조립 상담받기</button></div>';return}
+ if(!shops.length){list.innerHTML='<div class="empty">주변 승인 매장이 아직 없습니다.<br>승인 완료된 매장만 이곳에 표시됩니다.</div>';return}
  list.innerHTML=shops.map(function(s,i){var img=photo(s);return '<div class="shop'+(selectedShop===s.id?' sel':'')+'" onclick="pick('+i+')"><div class="ph">'+(img?'<img src="'+img.replace(/"/g,'')+'" alt="">':'🏪')+'</div><div class="info"><div class="nm">'+esc(s.shop_name)+' <span class="ck">✔ 선택됨</span></div><div class="mt">'+esc(s.address||'')+'</div><div class="rt">⭐ '+Number(s.avg_rating||s.rating||0).toFixed(1)+' · 후기 '+(s.review_count||0)+(s.distance!=null?' · 여기서 '+Number(s.distance).toFixed(1)+'km':'')+'</div></div></div>'}).join('');
 }
 window.pick=function(i){selectedShop=shops[i].id;render()};
-function fallback(){fetch('/api/shops?radius=100&sort=rating',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){shops=dd.shops||[];render()}).catch(function(){shops=[];render()})}
+function loadPlain(){fetch('/api/shops',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){shops=dd.shops||[];render()}).catch(function(){shops=[];render()})}
+function fallback(){fetch('/api/shops?radius=100&sort=rating',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){if(dd.shops&&dd.shops.length){shops=dd.shops;render()}else loadPlain()}).catch(loadPlain)}
 function nearby(lat,lon){fetch('/api/shops?latitude='+lat+'&longitude='+lon+'&radius=40&sort=distance',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){if(dd.shops&&dd.shops.length){shops=dd.shops;render()}else fallback()}).catch(fallback)}
 if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){nearby(p.coords.latitude,p.coords.longitude)},fallback,{maximumAge:300000,timeout:6000})}else{fallback()}
 document.getElementById('submitBtn').onclick=function(){
