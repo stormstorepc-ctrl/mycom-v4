@@ -1,1 +1,177 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM | 예약 관리</title><style>body{margin:0;background:#f6f7f9;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;color:#202124}.wrap{max-width:900px;margin:auto;padding:18px}.top,.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 20px #00000008}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:22px;font-weight:900;color:#00a878}.row{padding:16px 0;border-bottom:1px solid #eee}.row:last-child{border:0}.name{font-weight:900}.muted{color:#777;font-size:13px;margin-top:5px}.actions{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}button{border:0;border-radius:10px;padding:9px 12px;background:#00a878;color:#fff;font-weight:800}.cancel{background:#fff0f0;color:#c92a2a}.pending{color:#d9480f}.confirmed{color:#087f5b}.completed{color:#1864ab}@media(max-width:600px){.wrap{padding:12px}}</style></head><body><main class="wrap"><header class="top"><div><div class="brand">MYCOM PARTNER</div><b>📅 예약 관리</b></div><button onclick="location.href='/partner.html'">← 업체관리</button></header><section class="card"><div id="list">불러오는 중...</div></section></main><script>const token=localStorage.getItem('mycom_token')||localStorage.getItem('token');let shopId;async function api(u,o={}){const r=await fetch(u,{...o,headers:{Authorization:'Bearer '+token,...(o.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'요청 실패');return d}async function load(){if(!token){location.href='/partner.html';return}try{const m=await api('/api/auth/me');if(m.user.role!=='shop'||!m.user.shop_id){location.href='/partner.html';return}shopId=m.user.shop_id;const d=await api('/api/reservations/shop/'+shopId);render(d.reservations||[])}catch(e){list.textContent=e.message}}function render(a){list.innerHTML=a.map(r=>`<div class="row"><div class="name">${esc(r.user_name||'고객')} · ${esc(r.service_type||'방문 상담')}</div><div class="muted">📅 ${esc(r.reservation_date||'')} ${esc(r.reservation_time||'')}</div><div class="muted">📞 ${esc(r.user_phone||'미등록')}</div><div class="muted">${esc(r.notes||'요청사항 없음')}</div><div class="actions"><b class="${esc(r.status)}">현재 상태: ${statusText(r.status)}</b>${r.status==='pending'?`<button onclick="change('${r.id}','confirmed')">예약 확정</button>`:''}${r.status==='confirmed'?`<button onclick="change('${r.id}','completed')">방문 완료</button>`:''}${r.status!=='cancelled'&&r.status!=='completed'?`<button class="cancel" onclick="change('${r.id}','cancelled')">예약 취소</button>`:''}</div></div>`).join('')||'<p class="muted">예약 내역이 없습니다.</p>'}function statusText(s){return({pending:'접수 대기',confirmed:'예약 확정',completed:'완료',cancelled:'취소'})[s]||s}async function change(id,status){if(status==='cancelled'&&!confirm('이 예약을 취소할까요?'))return;try{await api('/api/reservations/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});load()}catch(e){alert(e.message)}}function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}load();</script></body></html>
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#12b886">
+<title>MYCOM 파트너 · 예약 관리</title>
+<style>
+body{margin:0;background:#f5f7f8;color:#202a33;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 60px}
+.top{display:flex;align-items:center;gap:12px}
+.back,.notify{border:0;background:#fff;border-radius:12px;padding:10px 12px;font-weight:800}
+.top-main{flex:1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{background:#fff;border-radius:16px;padding:14px;text-align:center;box-shadow:0 5px 18px #00000008}
+.stat b{font-size:22px;display:block}
+.stat span{font-size:12px;color:#7a8590;font-weight:700}
+.tabs{display:flex;gap:8px;overflow:auto;margin:16px 0}
+.tab{white-space:nowrap;border:0;border-radius:999px;padding:10px 14px;background:#e9eef0;font-weight:800}
+.tab.on{background:#12b886;color:#fff}
+.card{background:#fff;border-radius:18px;padding:15px;margin:10px 0;box-shadow:0 5px 18px #00000008}
+.muted{color:#7a8590;font-size:13px;line-height:1.55}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.primary{border:0;border-radius:12px;padding:12px 16px;background:#12b886;color:#fff;font-weight:900;cursor:pointer}
+.danger{background:#fff0f0;color:#c92a2a}
+.empty{padding:55px 18px;text-align:center}
+.today-tag{display:inline-block;border-radius:6px;background:#12b886;color:#fff;font-size:10px;font-weight:900;padding:2px 6px;margin-left:6px;vertical-align:middle}
+.note{margin-top:9px;background:#f8f9fa;border-radius:10px;padding:11px;white-space:pre-line}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-row button{flex:1}
+</style>
+<body>
+<main class="wrap">
+  <div class="top">
+    <button class="back" onclick="history.length>1?history.back():location.href='/partner.html'">←</button>
+    <div class="top-main">
+      <h2 style="margin:0">예약 관리</h2>
+      <div class="muted">들어온 예약을 확인하고 수락·완료 처리하세요.</div>
+    </div>
+    <button class="notify" onclick="location.href='/notifications.html'">🔔</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="stWait" style="color:#f08c00">0</b><span>⏳ 수락 대기</span></div>
+    <div class="stat"><b id="stOk" style="color:#087f5b">0</b><span>✅ 확정</span></div>
+    <div class="stat"><b id="stToday" style="color:#1864ab">0</b><span>📅 오늘 일정</span></div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab" data-tab="pending">⏳ 대기 중</button>
+    <button class="tab" data-tab="confirmed">✅ 확정</button>
+    <button class="tab" data-tab="done">📦 완료·취소</button>
+    <button class="tab" data-tab="all">전체</button>
+  </nav>
+
+  <div id="app"><div class="card muted">불러오는 중...</div></div>
+</main>
+
+<script>
+const token = localStorage.getItem('mycom_token') || localStorage.getItem('token');
+let tab = new URLSearchParams(location.search).get('tab') || 'pending';
+let all = [];
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const auth = { Authorization: 'Bearer ' + token };
+
+function fmtDate(s){
+  const t = String(s||'').slice(0,10);
+  const d = new Date(t+'T00:00:00');
+  if(isNaN(d)) return t;
+  const w = ['일','월','화','수','목','금','토'];
+  return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+w[d.getDay()]+')';
+}
+function isToday(s){
+  const n = new Date();
+  const p = v => String(v).padStart(2,'0');
+  return String(s||'').slice(0,10) === n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());
+}
+function svcLabel(s){
+  s = String(s||'');
+  if(s.includes('조립')) return '🔧 조립대행';
+  if(s.includes('중고')||s.includes('검수')||s.includes('매입')) return '💰 중고검수·매입';
+  if(s.includes('출장')) return '🚗 출장 서비스';
+  if(s.includes('수리')||s.includes('점검')) return '🛠️ 수리/점검';
+  if(s.includes('업그레이드')) return '⬆️ 업그레이드';
+  if(s.includes('방문')||s.includes('상담')) return '🏠 방문예약';
+  return '🗓️ '+esc(s);
+}
+function statChip(st){
+  const m = {
+    pending:['⏳ 수락 대기 중','#fff3bf','#946200'],
+    confirmed:['✅ 예약 확정','#e6fcf5','#087f5b'],
+    completed:['🎉 완료됨','#e7f5ff','#1864ab'],
+    cancelled:['❌ 취소됨','#ffe3e3','#c92a2a']
+  };
+  const v = m[st] || [st,'#eee','#555'];
+  return `<span style="border-radius:999px;padding:5px 9px;background:${v[1]};color:${v[2]};font-size:11px;font-weight:900;white-space:nowrap">${v[0]}</span>`;
+}
+
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+
+async function json(url, opt = {}){
+  const r = await fetch(url, { ...opt, headers: { ...auth, 'Content-Type':'application/json', ...(opt.headers||{}) } });
+  const d = await r.json().catch(() => ({ error: '서버 응답을 읽을 수 없습니다.' }));
+  if(r.status === 401){ location.href='/index.html'; throw Error('로그인이 필요합니다.'); }
+  if(!r.ok) throw Error(d.error || '요청 실패');
+  return d;
+}
+
+async function load(){
+  if(!token){ alert('로그인 후 이용할 수 있습니다.'); return location.href='/index.html'; }
+  app.innerHTML = '<div class="card muted">불러오는 중...</div>';
+  try{
+    let d;
+    try{ d = await json('/api/reservations/partner'); }
+    catch(e){ d = await json('/api/reservations/shop'); }
+    all = d.reservations || [];
+    stWait.textContent  = all.filter(r => r.status==='pending').length;
+    stOk.textContent    = all.filter(r => r.status==='confirmed').length;
+    stToday.textContent = all.filter(r => r.status==='confirmed' && isToday(r.reservation_date)).length;
+    render();
+  }catch(e){
+    app.innerHTML = `<div class="card empty"><div style="font-size:40px">🟡</div>
+      <h3>${esc(e.message || '불러오지 못했습니다.')}</h3>
+      <p class="muted">신규 매장이라면 관리자 승인이 완료되어야 예약이 표시됩니다.</p>
+      <button class="primary" onclick="load()">다시 시도</button></div>`;
+  }
+}
+
+function actions(r){
+  if(r.status === 'pending')
+    return `<div class="btn-row"><button class="primary" onclick="setStatus('${r.id}','confirmed')">✅ 예약 수락</button><button class="primary danger" onclick="setStatus('${r.id}','cancelled')">거절</button></div>`;
+  if(r.status === 'confirmed')
+    return `<div class="btn-row"><button class="primary" onclick="setStatus('${r.id}','completed')">🎉 서비스 완료 처리</button><button class="primary danger" onclick="setStatus('${r.id}','cancelled')">예약 취소</button></div>`;
+  return '';
+}
+
+function render(){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  history.replaceState(null, '', '?tab=' + tab);
+  let a = all;
+  if(tab === 'pending')       a = all.filter(r => r.status === 'pending');
+  else if(tab === 'confirmed')a = all.filter(r => r.status === 'confirmed');
+  else if(tab === 'done')     a = all.filter(r => ['completed','cancelled'].includes(r.status));
+  if(!a.length){ app.innerHTML = empty(); return; }
+  app.innerHTML = a.map(r => `<article class="card">
+    <div class="row"><b>${svcLabel(r.service_type)}</b>${statChip(r.status || 'pending')}</div>
+    <div style="margin-top:8px;font-weight:800">👤 ${esc(r.customer_name || r.user_name || '고객')}${r.customer_phone ? ` <span class="muted" style="font-weight:600">📞 ${esc(r.customer_phone)}</span>` : ''}</div>
+    <p class="muted" style="margin:6px 0">📅 ${fmtDate(r.reservation_date)} · ${esc(String(r.reservation_time || '').slice(0,5))}${isToday(r.reservation_date) ? '<span class="today-tag">오늘</span>' : ''}</p>
+    ${r.address ? `<div class="muted">📍 ${esc(r.address)}</div>` : ''}
+    ${r.notes ? `<div class="muted note">${esc(r.notes)}</div>` : ''}
+    ${actions(r)}
+  </article>`).join('');
+}
+
+function empty(){
+  const msg = { pending:'대기 중인 예약 요청이 없습니다.', confirmed:'확정된 예약이 없습니다.', done:'완료·취소된 예약이 없습니다.', all:'아직 들어온 예약이 없습니다.' }[tab];
+  return `<div class="card empty"><div style="font-size:40px">📭</div><h3>${msg}</h3><p class="muted">고객이 예약을 신청하면 여기에 표시되고 알림이 도착합니다.</p></div>`;
+}
+
+async function setStatus(id, status){
+  const ask = {
+    confirmed: '예약을 수락할까요?\n고객에게 확정 알림이 갑니다.',
+    cancelled: '예약을 거절/취소할까요?\n고객에게 취소 알림이 갑니다.',
+    completed: '서비스를 완료 처리할까요?'
+  }[status];
+  if(!confirm(ask)) return;
+  try{
+    await json('/api/reservations/' + encodeURIComponent(id) + '/status', { method:'PUT', body: JSON.stringify({ status }) });
+    load();
+  }catch(e){ alert(e.message); }
+}
+
+document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+load();
+</script>
+</body>
+</html>
