@@ -23,6 +23,112 @@ async function askOpenAI(message, mode = 'general', history = []) {
     return data.output_text || data.output?.flatMap(o => o.content || []).find(c => c.type === 'output_text')?.text || '';
 }
 
+async function askOpenAIWithWebSearch(prompt) {
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) return null;
+    const model = process.env.AI_MODEL_DEFAULT || 'gpt-5.6-luna';
+    const response = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+        body: JSON.stringify({
+            model,
+            tools: [{
+                type: 'web_search',
+                filters: { allowed_domains: ['danawa.com'] },
+                search_context_size: 'medium'
+            }],
+            input: prompt
+        })
+    });
+    if (!response.ok) throw new Error(`OpenAI web search ${response.status}: ${await response.text()}`);
+    const data = await response.json();
+    return {
+        text: data.output_text || data.output?.flatMap(o => o.content || []).find(c => c.type === 'output_text')?.text || '',
+        response: data
+    };
+}
+
+function extractJson(text) {
+    if (!text) return null;
+    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    const source = fenced ? fenced[1] : text;
+    const match = source.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try { return JSON.parse(match[0]); } catch { return null; }
+}
+
+async function liveDanawaRecommendation({ usage, usageLabel, budget }) {
+    const safeBudget = Math.max(300000, Math.min(10000000, Number(budget) || 1500000));
+    const today = new Date().toISOString().slice(0, 10);
+    const prompt = `
+오늘 날짜는 ${today}입니다. 한국 시장에서 판매되는 데스크탑 부품으로 MYCOM PC 견적을 만들어 주세요.
+
+사용 용도: ${usageLabel || usage}
+예산: ${safeBudget.toLocaleString('ko-KR')}원
+
+반드시 다나와(대한민국) 페이지를 웹 검색해서 현재 가격을 확인하고, 가능하면 각 부품의 "카드 최저가"를 사용하세요. 현금 최저가나 단순 검색 스니펫 가격을 카드 최저가로 둔갑시키지 마세요. 같은 제품군의 서로 다른 모델을 섞지 말고, 현재 판매/가격비교가 확인되는 제품을 우선하세요.
+
+추천해야 할 부품: CPU, GPU, 메인보드, RAM, SSD, 파워, CPU 쿨러, 케이스.
+용도와 예산에 맞춰 GPU/CPU/RAM/SSD의 예산 배분을 조정하고, 부품 호환성(소켓/메모리 규격/파워 용량)을 확인하세요.
+총액은 각 부품의 확인된 카드 기준 예상가를 더한 값으로 계산하세요. 예산을 약간 초과하는 것보다 예산 안에서 성능을 최대화하는 구성을 우선하세요.
+
+가격을 확인할 수 없는 부품은 임의의 확정 가격을 만들지 말고 가격을 null로 두고, 추천은 계속하되 전체 상태를 "partial"로 표시하세요.
+
+응답은 반드시 아래 JSON 하나만 반환하세요. 설명 문장이나 마크다운은 금지합니다.
+{
+  "status": "live|partial|fallback",
+  "date": "YYYY-MM-DD",
+  "source": "Danawa card-price reference",
+  "usage": "game|video|office|ai",
+  "usageLabel": "...",
+  "budget": 1500000,
+  "total": 1490000,
+  "title": "...",
+  "summary": "...",
+  "components": [
+    {"category":"CPU","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"GPU","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"메인보드","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"RAM","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"SSD","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"파워","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"CPU 쿨러","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."},
+    {"category":"케이스","name":"...","price":0,"priceType":"card","sourceUrl":"https://...","reason":"..."}
+  ]
+}
+`.trim();
+
+    try {
+        const result = await askOpenAIWithWebSearch(prompt);
+        const parsed = extractJson(result?.text);
+        if (!parsed || !Array.isArray(parsed.components)) return null;
+        const normalized = parsed.components.map(c => ({
+            category: String(c.category || ''),
+            name: String(c.name || '선정 불가'),
+            price: Number.isFinite(Number(c.price)) ? Number(c.price) : null,
+            priceType: c.priceType === 'card' ? 'card' : 'reference',
+            sourceUrl: typeof c.sourceUrl === 'string' ? c.sourceUrl : '',
+            reason: String(c.reason || '')
+        }));
+        const knownTotal = normalized.reduce((sum, c) => sum + (Number.isFinite(c.price) ? c.price : 0), 0);
+        return {
+            status: parsed.status === 'live' || parsed.status === 'partial' ? parsed.status : 'partial',
+            date: parsed.date || today,
+            source: 'Danawa card-price reference via web search',
+            usage: parsed.usage || usage,
+            usageLabel: parsed.usageLabel || usageLabel,
+            budget: safeBudget,
+            total: knownTotal || Number(parsed.total) || 0,
+            title: parsed.title || `${usageLabel || 'PC'} 추천 구성`,
+            summary: parsed.summary || `예산 ${safeBudget.toLocaleString('ko-KR')}원 기준 다나와 카드가 참고 구성`,
+            components: normalized
+        };
+    } catch (error) {
+        console.warn('실시간 다나와 추천 조회 실패:', error.message);
+        return null;
+    }
+}
+
 function needsHuman(message, mode, answer) {
     const text = `${message} ${answer || ''}`.toLowerCase();
     const keywords = ['실제 가격', '정확한 가격', '재고', '출장', '방문', '예약', '매입', '팔고', '수리', '조립대행', '사장님', '업체 연결', '상담원'];
@@ -38,6 +144,18 @@ router.post('/analyze-pc', authenticate, async (req, res) => {
     } catch (error) {
         console.error('PC 분석 오류:', error);
         res.status(500).json({ error: 'PC 분석 중 오류가 발생했습니다.' });
+    }
+});
+
+router.post('/pc-build-recommend', authenticate, async (req, res) => {
+    try {
+        const { usage = 'game', usageLabel = '게임용', budget = 1500000 } = req.body || {};
+        const live = await liveDanawaRecommendation({ usage, usageLabel, budget });
+        if (!live) return res.status(503).json({ error: '오늘의 다나와 카드가를 조회하지 못했습니다. 잠시 후 다시 시도해주세요.' });
+        res.json({ recommendation: live, generatedAt: new Date().toISOString(), livePriceReference: true });
+    } catch (error) {
+        console.error('실시간 PC 견적 오류:', error);
+        res.status(500).json({ error: '실시간 PC 견적을 생성하는 중 오류가 발생했습니다.' });
     }
 });
 
