@@ -1,7 +1,7 @@
 {
-  "versionCode": 4,
-  "versionName": "4.0.3",
-  "apkUrl": "https://github.com/stormstorepc-ctrl/mycom-v4/releases/download/v4.0.3/app-debug.apk",
+  "versionCode": 5,
+  "versionName": "4.0.4",
+  "apkUrl": "https://github.com/stormstorepc-ctrl/mycom-v4/releases/download/v4.0.4/app-debug.apk",
   "mandatory": false,
-  "message": "MYCOM 4.0.3 업데이트가 있습니다. 최신 기능과 오류 수정이 적용되었습니다."
+  "message": "MYCOM 4.0.4 업데이트가 있습니다. 최신 기능과 오류 수정이 적용되었습니다."
 }
