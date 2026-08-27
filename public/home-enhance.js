@@ -1,6 +1,6 @@
 (()=>{
-  const go=t=>t==='sell'?location.href='/sell.html':t==='assembly'?location.href='/assembly.html':location.href=`/ai.html?type=${encodeURIComponent(t)}`;
-  const map=[['내컴퓨터팔기','sell'],['컴퓨터팔기','sell'],['PC판매','sell'],['PC팔기','sell'],['중고PC','sell'],['조립대행','assembly'],['PC조립','assembly'],['컴퓨터견적','quote'],['PC견적','quote'],['방문예약','visit'],['출장서비스','visit'],['PC수리','repair'],['업그레이드','repair'],['수리','repair']];
+  const go=t=>t==='sell'?location.href='/sell.html':t==='assembly'?location.href='/assembly.html':t==='build'?location.href='/#build':location.href=`/ai.html?type=${encodeURIComponent(t)}`;
+  const map=[['PC견적만들기','build'],['내컴퓨터팔기','sell'],['컴퓨터팔기','sell'],['PC판매','sell'],['PC팔기','sell'],['중고PC','sell'],['조립대행','assembly'],['PC조립','assembly'],['컴퓨터견적','quote'],['PC견적','quote'],['방문예약','visit'],['출장서비스','visit'],['PC수리','repair'],['업그레이드','repair'],['수리','repair']];
   const normT=s=>String(s||'').replace(/\s+/g,'');
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const shopImage=s=>{let arr=s?.shop_images;if(typeof arr==='string'){try{arr=JSON.parse(arr)}catch{arr=arr.split(',').map(x=>x.trim()).filter(Boolean)}}if(!Array.isArray(arr))arr=[];return String(s?.cover_image||arr[0]||'').trim()};
