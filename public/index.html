@@ -1104,7 +1104,7 @@ AI가 PC 사양과 중고 시세를 분석하고<br>
 나에게 맞는 최적의 구성을 찾아드립니다.
 </p>
 
-<button class="hero-btn" onclick="goScreen('build')">
+<button class="hero-btn" onclick="go('build')">
 PC 견적 만들기 →
 </button>
 
@@ -2288,7 +2288,6 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 function go(id, nav) {
     // 홈 메뉴에서만 AI 상담으로 연결합니다. 기존 화면/디자인은 그대로 유지합니다.
-    if (!nav && id === "build") { window.location.href = "/ai.html?type=quote"; return; }
     if (!nav && id === "sell") { window.location.href = "/ai.html?type=sell"; return; }
     if (!nav && id === "chat") { window.location.href = "/ai.html?type=general"; return; }
 
