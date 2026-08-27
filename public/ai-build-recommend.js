@@ -23,20 +23,6 @@
     ai: { title:'AI 개발·생성형 AI PC', cpu:'Ryzen 9 9900X', gpu:'RTX 5070 Ti 16GB', ram:'DDR5 64GB', ssd:'NVMe 2TB', board:'B850M', psu:'850W 80+ Gold', cooler:'360mm 수랭', total:2190000 }
   };
 
-  function removePriceNoise(root) {
-    root.querySelectorAll('[data-ai-recommend-note], [data-ai-price-detail]').forEach(el => el.remove());
-    root.querySelectorAll('.price-result p').forEach(p => p.remove());
-    root.querySelectorAll('.price-value').forEach(el => {
-      const parent = el.parentElement;
-      if (parent) {
-        [...parent.childNodes].forEach(node => {
-          if (node.nodeType === 1 && /예상|견적/i.test(node.textContent || '') && node !== el) node.remove();
-          if (node.nodeType === 3 && /예상 견적|예상가/i.test(node.textContent || '')) node.remove();
-        });
-      }
-    });
-  }
-
   function apply(rec, budget, type, label) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('recommend')?.classList.add('active');
@@ -45,13 +31,14 @@
     const root = document.getElementById('recommend');
     if (!root) return;
 
-    root.querySelector('.price-result h2')?.replaceChildren(document.createTextNode(rec.title || 'MYCOM 추천 PC'));
+    // 결과 카드에서는 "예상 견적" 라벨을 표시하지 않고 금액만 보여줍니다.
+    root.querySelector('.price-label')?.remove();
+    root.querySelector('.price-result h2')?.replaceChildren(document.createTextNode(rec.title || 'AI 추천 구성'));
     const priceValue = root.querySelector('.price-value');
-    if (priceValue) {
-      priceValue.textContent = money(rec.total);
-      const labelEl = priceValue.parentElement?.querySelector('.price-label');
-      if (labelEl) labelEl.textContent = '추천 PC 가격';
-    }
+    if (priceValue) priceValue.textContent = money(rec.total);
+
+    const priceNote = root.querySelector('.price-result p');
+    if (priceNote) priceNote.textContent = `선택 용도: ${label || '게임용'} · 입력 예산 ${money(budget)} 기준`;
 
     const specs = {
       CPU: rec.cpu,
@@ -68,7 +55,8 @@
       if (value && specs[key]) value.textContent = specs[key];
     });
 
-    removePriceNoise(root);
+    // 이전 버전에 의해 남아있는 가격 근거/안내 요소도 결과 화면에서는 모두 제거합니다.
+    root.querySelectorAll('[data-ai-recommend-note],[data-ai-price-detail]').forEach(el => el.remove());
 
     sessionStorage.setItem('mycom_ai_pc_recommendation', JSON.stringify({
       usage: type,
@@ -98,13 +86,13 @@
     const label = document.querySelector('.usage-card.active strong')?.innerText || '게임용';
     const button = Array.from(document.querySelectorAll('button')).find(b => /AI 추천 PC 보기/.test(b.innerText || ''));
     const original = button?.innerText;
-    if (button) { button.disabled = true; button.innerText = '🔎 추천 구성 확인 중...'; }
+    if (button) { button.disabled = true; button.innerText = '🔎 오늘의 가격 확인 중...'; }
 
     try {
       const live = await getLiveRecommendation(budget, type, label);
       apply({ ...live, source:'danawa' }, budget, type, label);
     } catch (error) {
-      console.warn('실시간 추천 실패:', error);
+      console.warn('실시간 가격 조회 실패:', error);
       const rec = fallback[type] || fallback.game;
       apply({ ...rec, source:'fallback', date:new Date().toISOString().slice(0,10), status:'fallback' }, budget, type, label);
     } finally {
