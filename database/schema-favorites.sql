@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS favorites (id UUID PRIMARY KEY DEFAULT gen_random_uuid(),user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,shop_id UUID NOT NULL REFERENCES shops(id) ON DELETE CASCADE,created_at TIMESTAMP DEFAULT NOW(),UNIQUE(user_id,shop_id));
+CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id,created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_favorites_shop ON favorites(shop_id);
