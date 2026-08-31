@@ -29,6 +29,7 @@ button{border:0;border-radius:10px;padding:13px 15px;background:#00a878;color:#f
 <option value="PC 수리/점검">PC 수리/점검</option>
 <option value="업그레이드">업그레이드</option>
 <option value="중고PC 매입 상담">중고PC 매입 상담</option>
+<option value="중고PC 정밀 검수">중고PC 정밀 검수</option>
 </select>
 <label for="date">날짜</label>
 <input type="date" id="date" class="input">
@@ -53,6 +54,7 @@ var d=document.getElementById('date'),pad=function(n){return (n<10?'0':'')+n},fm
 var now=new Date();d.min=fmt(now);d.value=fmt(now);var max=new Date();max.setDate(max.getDate()+30);d.max=fmt(max);
 if(!shopId){shopCard.innerHTML='❌ 매장 정보가 없습니다. 매장을 먼저 선택해주세요.';document.getElementById('formCard').style.display='none';return}
 if(q.get('type')==='assembly'){document.getElementById('service_type').value='PC 조립'}
+if(q.get('type')==='inspection'){document.getElementById('service_type').value='중고PC 정밀 검수'}
 fetch('/api/shops/'+encodeURIComponent(shopId),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('매장을 찾을 수 없습니다.');return r.json()}).then(function(x){var s=x.shop||{};shopCard.innerHTML='<div class="shop-name">🏪 '+(s.shop_name||'MYCOM 업체')+'</div><div class="meta">'+(s.address||'')+' '+(s.detail_address||'')+'<br>'+(s.phone||'')+'</div>'}).catch(function(e){shopCard.innerHTML='❌ '+e.message;document.getElementById('formCard').style.display='none'});
 window.submitReserve=function(){
  msg.className='msg';msg.textContent='';

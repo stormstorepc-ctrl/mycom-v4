@@ -1198,7 +1198,7 @@ placeholder="PC 조립 대행, 수리, 중고판매를 검색하세요"
 <span>출장 서비스</span>
 </div>
 
-<div class="category" onclick="showToast('인기 견적을 준비 중입니다.')">
+<div class="category" onclick="go('bid')">
 <div class="category-icon">🔥</div>
 <span>인기 견적</span>
 </div>
@@ -1850,11 +1850,16 @@ color:var(--primary)
 </div>
 
 
-<button class="primary-btn" onclick="showToast('검수 예약 페이지로 이동합니다.')">
+<button class="primary-btn" onclick="findInspectionShops()">
 
 검수 예약하기
 
 </button>
+
+<div id="inspectionShopsWrap" style="display:none;margin-top:16px">
+<div style="font-weight:900;margin-bottom:10px">📍 내 주변 검수 가능 업체</div>
+<div id="inspectionShopsList"></div>
+</div>
 
 </div>
 
@@ -2610,6 +2615,92 @@ async function loadShops() {
     }
 }
 
+/* ================= INSPECTION: 검수 예약 - 내 주변 업체 찾기 ================= */
+
+function escInspectionText(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+}
+
+function renderInspectionShops(shops, locationNote) {
+    const wrap = document.getElementById('inspectionShopsWrap');
+    const list = document.getElementById('inspectionShopsList');
+    wrap.style.display = 'block';
+
+    let html = locationNote ? `<p style="font-size:12px;color:var(--sub);margin:0 0 10px">${escInspectionText(locationNote)}</p>` : '';
+
+    if (!shops.length) {
+        html += '<p>현재 승인된 검수 가능 업체가 없습니다.</p>';
+        list.innerHTML = html;
+        return;
+    }
+
+    html += shops.slice(0, 10).map(shop => `
+        <div class="shop-card">
+            <div class="shop-image">${shopImgHtml(shop)}</div>
+            <div class="shop-body">
+                <div class="shop-name-row" style="display:flex;justify-content:space-between;align-items:center">
+                    <span class="shop-name">${escInspectionText(shop.shop_name)}</span>
+                    ${shop.distance != null ? `<span class="shop-rating">${Number(shop.distance).toFixed(1)}km</span>` : ''}
+                </div>
+                <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
+                <p style="margin:6px 0 0;font-size:12px;color:var(--sub)">${escInspectionText(shop.address || '')}</p>
+                <div class="shop-actions">
+                    <button class="secondary-btn" onclick="location.href='/shop.html?id=${shop.id}'">매장 보기</button>
+                    <button class="small-primary" onclick="location.href='/reserve.html?shop=${shop.id}&type=inspection'">이 매장에서 검수 예약</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    list.innerHTML = html;
+}
+
+async function findInspectionShops() {
+    const wrap = document.getElementById('inspectionShopsWrap');
+    const list = document.getElementById('inspectionShopsList');
+    wrap.style.display = 'block';
+    list.innerHTML = '<p>내 주변 승인 업체를 찾는 중...</p>';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    const fetchShops = async (lat, lng) => {
+        const qs = (lat != null && lng != null) ? `?latitude=${lat}&longitude=${lng}&sort=distance` : '';
+        return apiCall('/shops' + qs);
+    };
+
+    if (!('geolocation' in navigator)) {
+        try {
+            const data = await fetchShops(null, null);
+            renderInspectionShops(data.shops || [], '현재 위치를 확인할 수 없어 전체 승인 업체를 표시합니다.');
+        } catch (e) {
+            list.innerHTML = '<p>업체 목록을 불러오지 못했습니다.</p>';
+        }
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            try {
+                const data = await fetchShops(pos.coords.latitude, pos.coords.longitude);
+                renderInspectionShops(data.shops || [], null);
+            } catch (e) {
+                list.innerHTML = '<p>업체 목록을 불러오지 못했습니다.</p>';
+            }
+        },
+        async () => {
+            // 위치정보 거부/실패 시에도 화면이 깨지지 않도록 전체 업체로 대체
+            try {
+                const data = await fetchShops(null, null);
+                renderInspectionShops(data.shops || [], '현재 위치를 확인할 수 없어 전체 승인 업체를 표시합니다.');
+            } catch (e) {
+                list.innerHTML = '<p>업체 목록을 불러오지 못했습니다.</p>';
+            }
+        },
+        { timeout: 8000 }
+    );
+}
+
 /* ================= BIDS ================= */
 
 // go('bid') 하기 전에 이 변수에 견적 id를 넣어두면 해당 견적의 입찰만 보여준다.
@@ -2668,7 +2759,7 @@ async function loadBids() {
             html += '<p>아직 입찰이 없습니다. 인증 매장들이 확인 후 입찰을 남기면 여기에 표시됩니다.</p>';
         }
         
-        html += '<button class="primary-btn" style="margin-top:10px" onclick="showToast(\'입찰 알림 신청이 완료되었습니다.\')">🔔 최고가 변경 알림 받기</button>';
+        html += '<button class="primary-btn" style="margin-top:10px" onclick="showToast(\'최고가 변경 알림 기능은 준비 중입니다. 추후 업데이트 예정입니다.\')">🔔 최고가 변경 알림 받기</button>';
         container.innerHTML = html;
     } catch (error) {
         showToast('입찰 정보를 불러오지 못했습니다.');
