@@ -152,6 +152,10 @@ a:hover { color: var(--primary-dark); }
 }
 
 .lead-sub { margin: 0; font-size: 14px; line-height: 1.55; color: var(--sub); max-width: 30ch; }
+.lead-intro { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.lead-sub { flex: 1; min-width: 0; max-width: none; font-size: 13.5px; line-height: 1.75; letter-spacing: -0.1px; word-break: keep-all; }
+.lead-expert { width: 124px; height: 124px; flex: 0 0 124px; margin-left: auto; }
+
 
 .trust-strip {
     display: flex;
@@ -323,7 +327,7 @@ a:hover { color: var(--primary-dark); }
 }
 .category:active .category-icon { background: #DCE9FD; }
 
-.category span { display: block; margin-top: 7px; font-size: 12px; font-weight: 600; color: #3C414A; }
+.category span { display: block; margin-top: 7px; font-size: 12px; font-weight: 600; color: #3C414A; line-height: 1.35; word-break: keep-all; }
 
 /* ================= HORIZONTAL CARDS ================= */
 
@@ -1171,3 +1175,8 @@ a:hover { color: var(--primary-dark); }
 }
 .time-slot:hover { border-color: #C2C8D0; }
 .time-slot.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+#qfDesc { min-height: 210px; line-height: 1.65; resize: vertical; }
+#repairDesc { min-height: 170px; line-height: 1.65; resize: vertical; }
+
+textarea.input, select.input, .input { font-family: inherit; }
