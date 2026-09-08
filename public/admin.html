@@ -16,7 +16,7 @@ button:hover{filter:brightness(1.06)}
 .tab{background:#e8f2ee;color:#087657}
 section.panel{display:none}
 section.panel.on{display:block}
-.search,input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0 14px;font-family:inherit;font-size:14px}
+.search,input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0 14px;font-family:inherit;font-size:14px}
 textarea{min-height:120px;line-height:1.6;resize:vertical}
 .badge{padding:4px 8px;border-radius:99px;background:#eef5f1;color:#087657;font-size:12px}
 label.lbl{display:block;font-size:13px;font-weight:700;color:#374151;margin-top:14px}
@@ -29,7 +29,6 @@ label.lbl{display:block;font-size:13px;font-weight:700;color:#374151;margin-top:
 .shot{width:100%;aspect-ratio:7/8;object-fit:cover;border-radius:14px;background:#eef1f4;display:block}
 .photo-row{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
 .photo-row img{width:96px;aspect-ratio:7/8;object-fit:cover;border-radius:10px}
-iframe.embed{width:100%;height:78vh;border:1px solid #e5e7eb;border-radius:14px;background:#fff}
 @media(max-width:820px){.grid2{grid-template-columns:1fr}}
 @media(max-width:700px){.wrap{padding:14px}.card{padding:14px;overflow:auto}table{min-width:650px}}
 </style>
@@ -48,15 +47,80 @@ function login(m=''){
 function shopRows(a){return a.map(x=>`<tr><td><b>${esc(x.shop_name)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.name)}</td><td>${x.is_approved?'승인':'대기'} / ${x.is_active===false?'정지':'운영'}</td><td><button class="small" onclick="approval('${x.id}',${!x.is_approved})">${x.is_approved?'승인취소':'승인'}</button> <button class="small ${x.is_active===false?'ghost':'danger'}" onclick="active('${x.id}',${x.is_active===false})">${x.is_active===false?'복구':'정지'}</button> <button class="small danger" onclick="removeMember('${x.user_id}','${esc(x.shop_name)}')">삭제</button></td></tr>`).join('')}
 function userRows(a){return a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td><span class="badge">${esc(x.role)}</span></td><td>${new Date(x.created_at).toLocaleDateString('ko-KR')}</td><td>${x.role==='admin'?'최고 관리자':`<button class="small danger" onclick="removeMember('${x.id}','${esc(x.name)}')">삭제</button>`}</td></tr>`).join('')}
 
+let activeTab='shops';
+
 function showTab(n){
+  activeTab=n;
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   document.getElementById('panel-'+n).classList.add('on');
   document.getElementById('tab-'+n).classList.add('on');
   if(n==='home'){loadSettings();loadExpertPhotos()}
+  if(n==='banners'){loadBanners()}
+}
+
+// 승인·정지·삭제 후 표만 다시 그려, 보고 있던 탭을 유지합니다.
+async function refreshTables(){
+  try{
+    const [u,sh]=await Promise.all([req('/api/admin/users'),req('/api/admin/shops')]);
+    USERS=u.users;SHOPS=sh.shops;render();
+  }catch(e){alert(e.message)}
 }
 
 function render(){shopBody.innerHTML=shopRows(SHOPS);userBody.innerHTML=userRows(USERS)}
+
+/* ---------- 배너 관리 ---------- */
+let heroData=null;
+
+async function loadBanners(){loadHeroBanners();loadDeals()}
+
+async function loadHeroBanners(){
+  const box=document.getElementById('heroList');
+  try{
+    const r=await fetch('/api/images/featured/banner',{cache:'no-store'});
+    const list=((await r.json()).images||[]).filter(x=>!/전문가/.test(String(x.title||'')));
+    if(!list.length){box.innerHTML='<p class="hint">등록된 상단 배너가 없습니다. 등록 전에는 기본 배경이 보입니다.</p>';return}
+    box.innerHTML=list.map(x=>`<div class="photo-row"><img src="${x.image_url}" alt="상단 배너" style="width:132px;aspect-ratio:16/9"><div><div style="font-weight:700;font-size:13px">${esc(x.title||'배너')}</div><button class="small danger" onclick="removeBanner('${x.id}')">삭제</button></div></div>`).join('');
+  }catch(e){box.innerHTML='<p class="hint">배너 정보를 불러오지 못했습니다.</p>'}
+}
+
+async function removeBanner(id){
+  if(!confirm('이 배너를 삭제할까요?'))return;
+  try{await req('/api/images/'+id,{method:'DELETE'});say('heroMsg','삭제했습니다.','ok');loadHeroBanners()}
+  catch(e){say('heroMsg',e.message,'err')}
+}
+
+function onPickHero(input){
+  const f=input.files[0];if(!f)return;
+  if(f.size>10*1024*1024)return say('heroMsg','10MB 이하 이미지만 등록할 수 있습니다.','err');
+  const reader=new FileReader();
+  reader.onload=()=>{heroData=reader.result;document.getElementById('heroPreview').src=heroData;say('heroMsg','')};
+  reader.readAsDataURL(f);
+}
+
+async function uploadHero(){
+  if(!heroData)return say('heroMsg','등록할 사진을 선택해주세요.','err');
+  const btn=document.getElementById('heroSave');
+  btn.disabled=true;btn.textContent='등록 중…';
+  try{
+    const slot=document.getElementById('heroSlot').value;
+    await req('/api/images/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:'banner',title:'배너 '+slot,imageData:heroData})});
+    say('heroMsg','등록했습니다. 홈 화면에 바로 반영됩니다.','ok');
+    heroData=null;document.getElementById('heroPreview').removeAttribute('src');
+    loadHeroBanners();
+  }catch(e){say('heroMsg',e.message,'err')}
+  finally{btn.disabled=false;btn.textContent='이 사진으로 등록'}
+}
+
+async function loadDeals(){
+  const box=document.getElementById('dealList');
+  try{
+    const r=await fetch('/api/special-banners',{cache:'no-store'});
+    const list=(await r.json()).banners||[];
+    if(!list.length){box.innerHTML='<p class="hint">등록된 특가 배너가 없습니다.</p>';return}
+    box.innerHTML=list.map(b=>`<div class="photo-row"><img src="${b.image_url}" alt="특가 배너" style="width:96px;aspect-ratio:1"><div><div style="font-weight:700;font-size:13px">${esc(b.title||'특가')}</div><p class="hint">${esc(b.subtitle||'')}</p></div></div>`).join('');
+  }catch(e){box.innerHTML='<p class="hint">특가 배너 정보를 불러오지 못했습니다.</p>'}
+}
 
 /* ---------- 메인화면 관리 ---------- */
 const EXPERT_TITLE='전문가 사진';
@@ -151,8 +215,26 @@ async function boot(){
 
 <section class="card panel" id="panel-banners">
   <h2>배너 관리</h2>
-  <p class="hint">홈 화면 상단 배너와 오늘의 특가 배너를 등록·수정합니다. 새 창에서 열려면 <a href="/special-banners-admin.html" target="_blank">특가 배너 관리 페이지</a>를 이용하세요.</p>
-  <iframe class="embed" src="/special-banners-admin.html" title="배너 관리"></iframe>
+  <div class="grid2">
+    <div>
+      <h3 style="margin:6px 0 0;font-size:15px">홈 상단 배너</h3>
+      <p class="hint">홈 화면 맨 위 슬라이드의 배경 사진입니다. 슬라이드 번호를 고르면 해당 칸의 배경으로 들어갑니다.</p>
+      <label class="lbl" for="heroSlot">슬라이드 번호</label>
+      <select id="heroSlot" class="search"><option value="1">1번 슬라이드 (PC 판매)</option><option value="2">2번 슬라이드 (AI 견적)</option><option value="3">3번 슬라이드</option></select>
+      <img class="shot" id="heroPreview" alt="미리보기" style="aspect-ratio:16/9">
+      <label class="drop" for="heroFile" style="margin-top:12px">배너 사진 선택하기</label>
+      <input type="file" id="heroFile" accept="image/*" style="display:none" onchange="onPickHero(this)">
+      <button id="heroSave" onclick="uploadHero()">이 사진으로 등록</button>
+      <div class="msg" id="heroMsg"></div>
+      <h4 style="margin:22px 0 0;font-size:14px">등록된 상단 배너</h4>
+      <div id="heroList"><p class="hint">불러오는 중…</p></div>
+    </div>
+    <div>
+      <h3 style="margin:6px 0 0;font-size:15px">오늘의 특가</h3>
+      <p class="hint">홈 화면 특가 띠에 최대 4개까지 노출됩니다.</p>
+      <div id="dealList"><p class="hint">불러오는 중…</p></div>
+    </div>
+  </div>
 </section>
 
 <section class="card panel" id="panel-home">
@@ -188,9 +270,9 @@ async function boot(){
   }catch(e){login(e.message)}
 }
 
-async function approval(id,v){try{await req('/api/admin/shops/'+id+'/approval',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:v})});boot()}catch(e){alert(e.message)}}
-async function active(id,v){try{await req('/api/admin/shops/'+id+'/active',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:v})});boot()}catch(e){alert(e.message)}}
-async function removeMember(id,name){if(!confirm('정말 '+name+' 회원을 삭제할까요?\n삭제 후에는 복구할 수 없습니다.'))return;if(!confirm('마지막 확인: '+name+' 회원을 영구 삭제합니다.'))return;try{await req('/api/admin/users/'+id,{method:'DELETE'});alert('삭제되었습니다.');boot()}catch(e){alert(e.message)}}
+async function approval(id,v){try{await req('/api/admin/shops/'+id+'/approval',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:v})});refreshTables()}catch(e){alert(e.message)}}
+async function active(id,v){try{await req('/api/admin/shops/'+id+'/active',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:v})});refreshTables()}catch(e){alert(e.message)}}
+async function removeMember(id,name){if(!confirm('정말 '+name+' 회원을 삭제할까요?\n삭제 후에는 복구할 수 없습니다.'))return;if(!confirm('마지막 확인: '+name+' 회원을 영구 삭제합니다.'))return;try{await req('/api/admin/users/'+id,{method:'DELETE'});alert('삭제되었습니다.');refreshTables()}catch(e){alert(e.message)}}
 boot();
 </script>
 </body></html>

@@ -40,7 +40,7 @@
         MYCOM
     </div>
     <div class="header-right">
-        <button class="location" onclick="showToast('위치 설정 기능은 준비 중입니다.')"><i class="ph-fill ph-map-pin"></i> 내 주변</button>
+        <button class="location" onclick="useMyLocation()"><i class="ph-fill ph-map-pin"></i> 내 주변</button>
         <button class="icon-btn" id="headerAuthBtn" onclick="showLogin()"><i class="ph ph-user-circle"></i></button>
         <button class="icon-btn" onclick="location.href='/notifications.html'"><i class="ph ph-bell"></i></button>
     </div>
@@ -138,7 +138,7 @@
     </div>
     <div class="category-grid">
         <div class="category" onclick="go('build')"><div class="category-icon"><i class="ph ph-desktop-tower"></i></div><span>PC 조립</span></div>
-        <div class="category" onclick="go('sell', true)"><div class="category-icon"><i class="ph ph-currency-krw"></i></div><span>PC 판매</span></div>
+        <div class="category" onclick="location.href='/sell.html'"><div class="category-icon"><i class="ph ph-currency-krw"></i></div><span>PC 판매</span></div>
         <div class="category" onclick="go('inspection')"><div class="category-icon"><i class="ph ph-magnifying-glass"></i></div><span>중고 검수</span></div>
         <div class="category" onclick="go('shops')"><div class="category-icon"><i class="ph ph-storefront"></i></div><span>매장 찾기</span></div>
         <div class="category" onclick="go('chat')"><div class="category-icon"><i class="ph ph-chat-teardrop-dots"></i></div><span>AI 상담</span></div>
@@ -178,85 +178,6 @@
     <div id="homeShopList"></div>
 </section>
 
-</div>
-
-
-<!-- ================= SELL ================= -->
-
-<div class="screen" id="sell">
-
-<div class="page-header">
-    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
-    내 PC 판매하기
-</div>
-
-<div class="page-content">
-
-    <div class="page-lead">
-        <h2>내 PC 사양을<br>알려주세요</h2>
-        <p>정확한 사양을 입력할수록 AI 예상 가격과 매장 입찰 가격이 더욱 정확해집니다.</p>
-    </div>
-
-    <button class="row-action" onclick="showToast('현재 구동 예정중입니다.')">
-        <i class="ph ph-lightning row-icon"></i>
-        <span class="row-body"><strong>사양 자동 인식</strong><small>PC에서 MYCOM 체커 실행</small></span>
-        <i class="ph ph-caret-right row-caret"></i>
-    </button>
-
-    <div class="form-group">
-        <label>CPU</label>
-        <input class="input" id="cpu" placeholder="예: Ryzen 7 5800X">
-    </div>
-
-    <div class="form-group">
-        <label>그래픽카드</label>
-        <input class="input" id="gpu" placeholder="예: RTX 4070">
-    </div>
-
-    <div class="form-group">
-        <label>RAM</label>
-        <input class="input" id="ram" placeholder="예: 32GB DDR4">
-    </div>
-
-    <div class="form-group">
-        <label>SSD</label>
-        <input class="input" id="storage" placeholder="예: NVMe 1TB">
-    </div>
-
-    <button class="primary-btn" onclick="analyzePC()"><i class="ph-fill ph-sparkle"></i> AI 예상 가격 분석하기</button>
-
-</div>
-</div>
-
-
-<!-- ================= PRICE RESULT ================= -->
-
-<div class="screen" id="price">
-
-<div class="page-header">
-    <button class="back-btn" onclick="go('sell')"><i class="ph ph-arrow-left"></i></button>
-    AI 예상 가격
-</div>
-
-<div class="page-content">
-
-    <div class="price-result">
-        <div class="price-label"><i class="ph-fill ph-sparkle"></i> AI 분석 완료 · 신뢰도 <span id="aiConfidence">92%</span></div>
-        <div class="price-caption">예상 판매가</div>
-        <div class="price-value" id="aiPriceRange">₩820,000 ~ ₩950,000</div>
-        <div class="price-spec">내 PC · <strong id="pcSpec">Ryzen 7 5800X · RTX 4070</strong></div>
-        <div class="analysis-progress"><span></span></div>
-        <div class="price-scale"><span>최저 68만</span><span>평균 88만</span><span>최고 106만</span></div>
-    </div>
-
-    <div class="note-row">
-        <i class="ph ph-shield-check"></i>
-        <p>입찰은 <strong>인증 매장만</strong> 참여합니다. 낙찰 후 가격 변경은 불가합니다.</p>
-    </div>
-
-    <button class="primary-btn" onclick="submitSellQuote()">인증 매장 입찰 받기</button>
-
-</div>
 </div>
 
 
@@ -838,7 +759,8 @@
         <div class="menu-item" onclick="go('myreservations')"><i class="ph ph-calendar-check"></i><span>예약 내역</span><i class="ph ph-caret-right row-caret"></i></div>
         <div class="menu-item" onclick="location.href='/favorites.html'"><i class="ph ph-heart"></i><span>찜한 매장</span><i class="ph ph-caret-right row-caret"></i></div>
         <div class="menu-item" onclick="location.href='/notifications.html'"><i class="ph ph-bell"></i><span>알림</span><i class="ph ph-caret-right row-caret"></i></div>
-        <div class="menu-item" onclick="go('chat')"><i class="ph ph-chat-circle"></i><span>상담 내역</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="go('chat', true)"><i class="ph ph-chat-circle"></i><span>상담 내역</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="location.href='/my-activity.html'"><i class="ph ph-clock-counter-clockwise"></i><span>전체 활동 기록</span><i class="ph ph-caret-right row-caret"></i></div>
     </div>
 </section>
 
@@ -854,6 +776,7 @@
     <div class="list-head">설정</div>
     <div class="menu-list">
         <div class="menu-item" onclick="goShopAdmin()"><i class="ph ph-storefront"></i><span>내 매장 관리</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="location.href='/settings.html'"><i class="ph ph-sliders-horizontal"></i><span>알림 · 계정 설정</span><i class="ph ph-caret-right row-caret"></i></div>
         <div class="menu-item" onclick="goSiteAdmin()"><i class="ph ph-gear-six"></i><span>관리자 설정</span><i class="ph ph-caret-right row-caret"></i></div>
         <div class="menu-item" onclick="confirmLogout()"><i class="ph ph-sign-out"></i><span>로그아웃</span><i class="ph ph-caret-right row-caret"></i></div>
     </div>
@@ -954,8 +877,8 @@
 /* ================= API 설정 ================= */
 const API_BASE = '/api';
 
-/* Google Maps — 키는 Google Cloud Console에서 HTTP 리퍼러(도메인)로 반드시 제한하세요 */
-const GOOGLE_MAPS_KEY = 'AIzaSyC3qZKr3d3vitWcjXMXTeUaJTFJ7L0ViQU';
+/* Google Maps — 키는 서버(/api/geocode/maps-key)에서 받아옵니다. 콘솔에서 HTTP 리퍼러 제한을 걸어두세요 */
+let GOOGLE_MAPS_KEY = '';
 let gmap = null, gmarkers = [], gmeMarker = null, gmapReady = false;
 
 function initGoogleMap() {
@@ -976,7 +899,12 @@ function initGoogleMap() {
 }
 window.initGoogleMap = initGoogleMap;
 
-(function loadGoogleMaps() {
+(async function loadGoogleMaps() {
+    try {
+        const r = await fetch('/api/geocode/maps-key', { cache: 'no-store' });
+        if (r.ok) GOOGLE_MAPS_KEY = (await r.json()).key || '';
+    } catch (e) { /* 키를 받지 못하면 도식 지도로 표시합니다 */ }
+    if (!GOOGLE_MAPS_KEY) { console.warn('지도 키가 없어 도식 지도로 표시합니다.'); return; }
     const s = document.createElement('script');
     s.src = 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_KEY + '&callback=initGoogleMap&language=ko&region=KR&loading=async';
     s.async = true;
@@ -1005,14 +933,17 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 /* ================= PAGE ================= */
 
 function go(id, nav) {
-    // 홈 메뉴에서만 AI 상담으로 연결합니다. 기존 화면/디자인은 그대로 유지합니다.
-    if (!nav && id === "sell") { window.location.href = "/ai.html?type=sell"; return; }
+    // 판매는 전용 페이지, AI 상담 카테고리는 상담 페이지로 보냅니다.
+    if (id === "sell") { window.location.href = "/sell.html"; return; }
     if (!nav && id === "chat") { window.location.href = "/ai.html?type=general"; return; }
+
+    const target = document.getElementById(id);
+    if (!target) { console.warn('없는 화면입니다:', id); return; }
 
     document.querySelectorAll(".screen").forEach(screen => {
         screen.classList.remove("active");
     });
-    document.getElementById(id).classList.add("active");
+    target.classList.add("active");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (nav && nav.classList) {
@@ -1034,8 +965,10 @@ function go(id, nav) {
 }
 /* 배너 전용 이동 버튼 */
 function goScreen(id) {
+    const target = document.getElementById(id);
+    if (!target) { console.warn('없는 화면입니다:', id); return; }
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+    target.classList.add("active");
     window.scrollTo({ top: 0, behavior: "smooth" });
     pushScreen(id);
 }
@@ -1054,17 +987,24 @@ function pushScreen(id) {
     } catch (e) { /* 히스토리를 쓸 수 없는 환경은 무시합니다 */ }
 }
 
+/* 화면과 하단 탭을 짝지어, 뒤로 가기에서도 탭 표시가 어긋나지 않게 합니다 */
+const NAV_OF_SCREEN = { home: 0, bid: 1, quoteflow: 2, build: 2, recommend: 2, repair: 2, visit: 2, inspection: 2, shops: 3, shopdetail: 3, mypage: 4, myquotes: 4, myreservations: 4, chat: 4 };
+
+function syncNavTab(id) {
+    const items = document.querySelectorAll('.bottom-nav .nav-item');
+    if (!items.length) return;
+    const i = NAV_OF_SCREEN[id];
+    items.forEach(item => item.classList.remove('active'));
+    if (i != null && items[i]) items[i].classList.add('active');
+}
+
 window.addEventListener('popstate', event => {
     const id = (event.state && event.state.screen) || 'home';
     const target = document.getElementById(id) ? id : 'home';
     historyLocked = true;
     go(target, true);
     historyLocked = false;
-    if (target === 'home') {
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        const homeTab = document.querySelector('.bottom-nav .nav-item');
-        if (homeTab) homeTab.classList.add('active');
-    }
+    syncNavTab(target);
 });
 
 function initHistory() {
@@ -1260,7 +1200,7 @@ async function loadHomeData() {
                         <span class="tag">PC 전문</span>
                     </div>
                     <div class="shop-actions">
-                        <button class="secondary-btn" onclick="go('chat')"><i class="ph ph-chat-circle"></i> 상담하기</button>
+                        <button class="secondary-btn" onclick="go('chat', true)"><i class="ph ph-chat-circle"></i> 상담하기</button>
                         <button class="small-primary" onclick="go('shops')">견적 요청</button>
                     </div>
                 </div>
@@ -1975,73 +1915,6 @@ async function loadBids() {
     }
 }
 
-/* ================= PC ANALYSIS ================= */
-
-let lastPCAnalysis = null; // AI 분석 결과 + 입력했던 스펙을 함께 보관
-
-async function analyzePC() {
-    const cpu = document.getElementById('cpu').value;
-    const gpu = document.getElementById('gpu').value;
-    const ram = document.getElementById('ram').value;
-    const storage = document.getElementById('storage').value;
-    
-    if (!cpu && !gpu) {
-        showToast('CPU 또는 GPU 정보를 입력해주세요.');
-        return;
-    }
-
-    if (!requireLogin()) return;
-    
-    try {
-        const data = await apiCall('/ai/analyze-pc', 'POST', {
-            cpu, gpu, ram, storage,
-            condition_grade: 'good'
-        });
-        
-        const analysis = data.analysis;
-        lastPCAnalysis = { cpu, gpu, ram, storage, analysis };
-
-        document.getElementById('pcSpec').innerText = `${cpu || '미입력'} · ${gpu || '미입력'}`;
-        document.getElementById('aiConfidence').textContent = analysis.confidence + '%';
-        document.getElementById('aiPriceRange').textContent = 
-            `₩${analysis.priceRange.min.toLocaleString()} ~ ₩${analysis.priceRange.max.toLocaleString()}`;
-        
-        go('price');
-    } catch (error) {
-        showToast(error.message);
-    }
-}
-
-// AI 분석 결과를 바탕으로 실제 판매 견적(quote)을 등록하고 입찰 화면으로 이동
-async function submitSellQuote() {
-    if (!requireLogin()) return;
-
-    if (!lastPCAnalysis) {
-        showToast('먼저 AI 가격 분석을 진행해주세요.');
-        go('sell');
-        return;
-    }
-
-    const { cpu, gpu, ram, storage, analysis } = lastPCAnalysis;
-    const title = `${cpu || 'PC'} · ${gpu || ''} 판매 견적`.trim();
-
-    try {
-        const data = await apiCall('/quotes', 'POST', {
-            quote_type: 'sell',
-            title,
-            description: `CPU: ${cpu || '-'} / GPU: ${gpu || '-'} / RAM: ${ram || '-'} / SSD: ${storage || '-'}`,
-            budget_min: analysis.priceRange.min,
-            budget_max: analysis.priceRange.max
-        });
-
-        showToast('견적이 등록되었습니다. 매장 입찰을 기다려주세요!');
-        pendingBidQuoteId = data.quote.id;
-        go('bid');
-    } catch (error) {
-        showToast(error.message);
-    }
-}
-
 /* ================= PC USAGE ================= */
 
 function selectUsage(element) {
@@ -2472,6 +2345,23 @@ async function loadHeroImages() {
 }
 
 
+/* ================= 내 주변 ================= */
+
+function useMyLocation() {
+    if (!('geolocation' in navigator)) return showToast('이 브라우저에서는 위치 확인을 지원하지 않습니다.');
+    showToast('현재 위치를 확인하는 중입니다…');
+    navigator.geolocation.getCurrentPosition(
+        pos => {
+            myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            shopSort = 'distance';
+            go('shops', true);
+            syncNavTab('shops');
+        },
+        () => showToast('위치 권한을 허용하면 가까운 매장을 먼저 보여드립니다.'),
+        { enableHighAccuracy: true, timeout: 8000 }
+    );
+}
+
 /* ================= 홈 문구 (관리자 수정) ================= */
 
 async function loadHomeCopy() {
@@ -2495,14 +2385,14 @@ async function loadHomeCopy() {
 async function loadExpertPhoto() {
     const box = document.getElementById('leadExpert');
     if (!box) return;
-    const pick = list => (list || []).find(x => /전문가/.test(String(x.title || ''))) || (list || [])[0];
+    const pick = list => (list || []).find(x => /전문가/.test(String(x.title || '')));
     let img = null;
     for (const type of ['menu', 'banner']) {
         try {
             const r = await fetch('/api/images/featured/' + type, { cache: 'no-store' });
             if (!r.ok) continue;
             const found = pick((await r.json()).images);
-            if (found && found.image_url && /전문가/.test(String(found.title || ''))) { img = found; break; }
+            if (found && found.image_url) { img = found; break; }
         } catch (e) { /* 등록된 사진이 없으면 자리표시를 유지합니다 */ }
     }
     if (!img) return;

@@ -6,9 +6,9 @@ async function geocode(addr){
   gpsMsg('<i class="ph ph-spinner"></i> 주소의 좌표를 찾는 중…','#6B7684');
   let lat=null,lng=null;
   try{
-    const r=await fetch('https://maps.googleapis.com/maps/api/geocode/json?language=ko&region=KR&key=AIzaSyC3qZKr3d3vitWcjXMXTeUaJTFJ7L0ViQU&address='+encodeURIComponent(addr));
+    const r=await fetch('/api/geocode?address='+encodeURIComponent(addr));
     const d=await r.json();
-    if(d.status==='OK'&&d.results[0]){lat=d.results[0].geometry.location.lat;lng=d.results[0].geometry.location.lng}
+    if(r.ok&&typeof d.lat==='number'){lat=d.lat;lng=d.lng}
   }catch(e){}
   if(lat==null){
     try{
