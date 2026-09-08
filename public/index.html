@@ -1192,10 +1192,26 @@ function locateMe() {
 
 async function fetchShops() {
     const list = document.getElementById('shopsList');
+    const note = document.getElementById('mapNote');
     try {
-        const qs = myPos ? `?latitude=${myPos.lat}&longitude=${myPos.lng}&radius=40&sort=distance` : '';
-        const data = await apiCall('/shops' + qs);
-        shopCache = data.shops || [];
+        let shops = [];
+        if (myPos) {
+            // 가까운 순으로 먼저 찾고, 주변에 없으면 범위를 넓혀 다시 찾습니다.
+            for (const radius of [40, 200, 1000]) {
+                const d = await apiCall(`/shops?latitude=${myPos.lat}&longitude=${myPos.lng}&radius=${radius}&sort=distance`);
+                shops = d.shops || [];
+                if (shops.length) {
+                    if (radius > 40) note.innerHTML = '<i class="ph-fill ph-map-pin"></i> 주변에 매장이 없어 범위를 넓혔습니다';
+                    break;
+                }
+            }
+        }
+        if (!shops.length) {
+            const d = await apiCall('/shops');
+            shops = d.shops || [];
+            if (shops.length && myPos) note.innerHTML = '<i class="ph-fill ph-map-pin"></i> 전체 인증 매장';
+        }
+        shopCache = shops;
         renderShops();
     } catch (e) {
         list.innerHTML = '<p style="padding:22px 20px;color:var(--sub);font-size:13px">매장을 불러오지 못했습니다.</p>';
@@ -1217,7 +1233,7 @@ function renderShops() {
     renderMapPins(shops);
 
     if (!shops.length) {
-        list.innerHTML = '<p style="padding:22px 20px;color:var(--sub);font-size:13px">조건에 맞는 인증 매장이 없습니다.</p>';
+        list.innerHTML = '<div style="padding:26px 20px;color:var(--sub);font-size:13px;line-height:1.6">조건에 맞는 인증 매장이 없습니다.<br>매장이 방금 등록되었다면 <b>관리자 승인</b> 후에 노출됩니다.</div>';
         return;
     }
 
