@@ -1,1 +1,196 @@
-<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM 최고 관리자</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f7f8;font-family:Arial,sans-serif;color:#1f2937}.wrap{max-width:1200px;margin:auto;padding:24px}.card{background:#fff;border-radius:18px;padding:20px;margin:16px 0}table{width:100%;border-collapse:collapse}th,td{padding:12px;border-bottom:1px solid #eee;text-align:left}button{border:0;border-radius:9px;padding:9px 12px;background:#087657;color:#fff;cursor:pointer}.danger{background:#c0392b}.ghost{background:#e8f2ee;color:#087657}.small{padding:6px 9px;font-size:12px}.tabs{display:flex;gap:8px;margin:16px 0}.tab.on{background:#087657;color:#fff}.tab{background:#e8f2ee;color:#087657}section.panel{display:none}section.panel.on{display:block}.search,input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0 14px}.badge{padding:4px 8px;border-radius:99px;background:#eef5f1;color:#087657;font-size:12px}@media(max-width:700px){.wrap{padding:14px}.card{padding:14px;overflow:auto}table{min-width:650px}}</style><body><main class="wrap" id="app"></main><script>let token=localStorage.getItem('mycom_token')||localStorage.getItem('token'),USERS=[],SHOPS=[];const app=document.getElementById('app');async function req(u,o={}){const h={...(o.headers||{})};if(token)h.Authorization='Bearer '+token;const r=await fetch(u,{...o,headers:h}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'오류');return d}const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function login(m=''){app.innerHTML=`<section class="card" style="max-width:480px;margin:70px auto"><h1>👑 MYCOM 최고 관리자</h1><form id="f"><input id="e" type="email" placeholder="관리자 이메일" required><input id="p" type="password" placeholder="관리자 비밀번호" required><button>로그인</button></form><p>${esc(m)}</p></section>`;f.onsubmit=async x=>{x.preventDefault();try{const d=await req('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.value,password:p.value})});if(d.user.role!=='admin')throw Error('최고 관리자 권한이 필요합니다.');token=d.token;localStorage.setItem('mycom_token',token);boot()}catch(z){alert(z.message)}}}function shopRows(a){return a.map(x=>`<tr><td><b>${esc(x.shop_name)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.name)}</td><td>${x.is_approved?'승인':'대기'} / ${x.is_active===false?'정지':'운영'}</td><td><button class="small" onclick="approval('${x.id}',${!x.is_approved})">${x.is_approved?'승인취소':'승인'}</button> <button class="small ${x.is_active===false?'ghost':'danger'}" onclick="active('${x.id}',${x.is_active===false})">${x.is_active===false?'복구':'정지'}</button> <button class="small danger" onclick="removeMember('${x.user_id}','${esc(x.shop_name)}')">삭제</button></td></tr>`).join('')}function userRows(a){return a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td><span class="badge">${esc(x.role)}</span></td><td>${new Date(x.created_at).toLocaleDateString('ko-KR')}</td><td>${x.role==='admin'?'최고 관리자':`<button class="small danger" onclick="removeMember('${x.id}','${esc(x.name)}')">삭제</button>`}</td></tr>`).join('')}function showTab(n){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.getElementById('panel-'+n).classList.add('on');document.getElementById('tab-'+n).classList.add('on')}function render(){shopBody.innerHTML=shopRows(SHOPS);userBody.innerHTML=userRows(USERS)}async function boot(){if(!token)return login();try{const me=await req('/api/auth/me');if(me.user.role!=='admin')return login('최고 관리자 권한이 필요합니다.');const [u,sh]=await Promise.all([req('/api/admin/users'),req('/api/admin/shops')]);USERS=u.users;SHOPS=sh.shops;app.innerHTML=`<h1>👑 MYCOM 최고 관리자</h1><p>회원과 컴퓨터 업체를 승인·정지·삭제할 수 있습니다.</p><nav class="tabs"><button class="tab on" id="tab-shops" onclick="showTab('shops')">🏪 업체 관리</button><button class="tab" id="tab-users" onclick="showTab('users')">👥 개인 회원 관리</button></nav><section class="card panel on" id="panel-shops"><h2>업체 관리</h2><input class="search" oninput="shopBody.innerHTML=shopRows(SHOPS.filter(x=>JSON.stringify(x).toLowerCase().includes(this.value.toLowerCase())))" placeholder="업체 검색"><table><thead><tr><th>업체</th><th>담당자</th><th>상태</th><th>관리</th></tr></thead><tbody id="shopBody"></tbody></table></section><section class="card panel" id="panel-users"><h2>개인 회원 관리</h2><input class="search" oninput="userBody.innerHTML=userRows(USERS.filter(x=>JSON.stringify(x).toLowerCase().includes(this.value.toLowerCase())))" placeholder="회원 검색"><table><thead><tr><th>이름</th><th>이메일</th><th>권한</th><th>가입일</th><th>관리</th></tr></thead><tbody id="userBody"></tbody></table></section>`;render()}catch(e){login(e.message)}}async function approval(id,v){try{await req('/api/admin/shops/'+id+'/approval',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:v})});boot()}catch(e){alert(e.message)}}async function active(id,v){try{await req('/api/admin/shops/'+id+'/active',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:v})});boot()}catch(e){alert(e.message)}}async function removeMember(id,name){if(!confirm('정말 '+name+' 회원을 삭제할까요?\n삭제 후에는 복구할 수 없습니다.'))return;if(!confirm('마지막 확인: '+name+' 회원을 영구 삭제합니다.'))return;try{await req('/api/admin/users/'+id,{method:'DELETE'});alert('삭제되었습니다.');boot()}catch(e){alert(e.message)}}boot();</script></main></body></html>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MYCOM 최고 관리자</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f7f8;font-family:Arial,sans-serif;color:#1f2937}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:#fff;border-radius:18px;padding:20px;margin:16px 0}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px;border-bottom:1px solid #eee;text-align:left}
+button{border:0;border-radius:9px;padding:9px 12px;background:#087657;color:#fff;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+.danger{background:#c0392b}
+.ghost{background:#e8f2ee;color:#087657}
+.small{padding:6px 9px;font-size:12px}
+.tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.tab.on{background:#087657;color:#fff}
+.tab{background:#e8f2ee;color:#087657}
+section.panel{display:none}
+section.panel.on{display:block}
+.search,input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0 14px;font-family:inherit;font-size:14px}
+textarea{min-height:120px;line-height:1.6;resize:vertical}
+.badge{padding:4px 8px;border-radius:99px;background:#eef5f1;color:#087657;font-size:12px}
+label.lbl{display:block;font-size:13px;font-weight:700;color:#374151;margin-top:14px}
+.hint{font-size:12px;color:#6b7280;line-height:1.7;margin:4px 0 0}
+.msg{font-size:13px;margin-top:10px;min-height:18px}
+.msg.ok{color:#087657}.msg.err{color:#c0392b}
+.grid2{display:grid;grid-template-columns:1fr 240px;gap:24px;align-items:start}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px dashed #c9d0d8;border-radius:14px;background:#f7f9fb;padding:26px 16px;text-align:center;font-size:13px;color:#6b7280;cursor:pointer}
+.drop:hover{background:#f1f5f9}
+.shot{width:100%;aspect-ratio:7/8;object-fit:cover;border-radius:14px;background:#eef1f4;display:block}
+.photo-row{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
+.photo-row img{width:96px;aspect-ratio:7/8;object-fit:cover;border-radius:10px}
+iframe.embed{width:100%;height:78vh;border:1px solid #e5e7eb;border-radius:14px;background:#fff}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+@media(max-width:700px){.wrap{padding:14px}.card{padding:14px;overflow:auto}table{min-width:650px}}
+</style>
+</head><body><main class="wrap" id="app"></main>
+<script>
+let token=localStorage.getItem('mycom_token')||localStorage.getItem('token'),USERS=[],SHOPS=[];
+const app=document.getElementById('app');
+async function req(u,o={}){const h={...(o.headers||{})};if(token)h.Authorization='Bearer '+token;const r=await fetch(u,{...o,headers:h}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'오류');return d}
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function login(m=''){
+  app.innerHTML=`<section class="card" style="max-width:480px;margin:70px auto"><h1>👑 MYCOM 최고 관리자</h1><form id="f"><input id="e" type="email" placeholder="관리자 이메일" required><input id="p" type="password" placeholder="관리자 비밀번호" required><button>로그인</button></form><p>${esc(m)}</p></section>`;
+  f.onsubmit=async x=>{x.preventDefault();try{const d=await req('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e.value,password:p.value})});if(d.user.role!=='admin')throw Error('최고 관리자 권한이 필요합니다.');token=d.token;localStorage.setItem('mycom_token',token);boot()}catch(z){alert(z.message)}};
+}
+
+function shopRows(a){return a.map(x=>`<tr><td><b>${esc(x.shop_name)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.name)}</td><td>${x.is_approved?'승인':'대기'} / ${x.is_active===false?'정지':'운영'}</td><td><button class="small" onclick="approval('${x.id}',${!x.is_approved})">${x.is_approved?'승인취소':'승인'}</button> <button class="small ${x.is_active===false?'ghost':'danger'}" onclick="active('${x.id}',${x.is_active===false})">${x.is_active===false?'복구':'정지'}</button> <button class="small danger" onclick="removeMember('${x.user_id}','${esc(x.shop_name)}')">삭제</button></td></tr>`).join('')}
+function userRows(a){return a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td><span class="badge">${esc(x.role)}</span></td><td>${new Date(x.created_at).toLocaleDateString('ko-KR')}</td><td>${x.role==='admin'?'최고 관리자':`<button class="small danger" onclick="removeMember('${x.id}','${esc(x.name)}')">삭제</button>`}</td></tr>`).join('')}
+
+function showTab(n){
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.getElementById('panel-'+n).classList.add('on');
+  document.getElementById('tab-'+n).classList.add('on');
+  if(n==='home'){loadSettings();loadExpertPhotos()}
+}
+
+function render(){shopBody.innerHTML=shopRows(SHOPS);userBody.innerHTML=userRows(USERS)}
+
+/* ---------- 메인화면 관리 ---------- */
+const EXPERT_TITLE='전문가 사진';
+let expertData=null;
+
+function say(id,text,kind){const el=document.getElementById(id);el.className='msg '+(kind||'');el.textContent=text}
+
+async function loadSettings(){
+  try{
+    const d=await req('/api/site-settings');
+    const s=d.settings||{};
+    document.getElementById('leadTitle').value=s.home_lead_title||'어떤 도움이 필요하세요?';
+    document.getElementById('leadSub').value=s.home_lead_sub||'MYCOM에는 검증을 거친 컴퓨터 전문점만 입점합니다.\n조립부터 수리, 업그레이드까지\n믿고 맡길 수 있는 전문가가 확실하게 해결해 드립니다.';
+  }catch(e){say('copyMsg','문구를 불러오지 못했습니다: '+e.message,'err')}
+}
+
+async function saveSettings(){
+  const btn=document.getElementById('copySave');
+  btn.disabled=true;btn.textContent='저장 중…';
+  try{
+    await req('/api/site-settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({home_lead_title:document.getElementById('leadTitle').value.trim(),home_lead_sub:document.getElementById('leadSub').value})});
+    say('copyMsg','저장했습니다. 홈 화면에 바로 반영됩니다.','ok');
+  }catch(e){say('copyMsg',e.message,'err')}
+  finally{btn.disabled=false;btn.textContent='문구 저장'}
+}
+
+async function loadExpertPhotos(){
+  const box=document.getElementById('expertList');
+  try{
+    const r=await fetch('/api/images/featured/menu',{cache:'no-store'});
+    const list=((await r.json()).images||[]).filter(x=>/전문가/.test(String(x.title||'')));
+    if(!list.length){box.innerHTML='<p class="hint">등록된 전문가 사진이 없습니다. 등록 전에는 홈 화면에 자리표시가 보입니다.</p>';return}
+    box.innerHTML=list.map((x,i)=>`<div class="photo-row"><img src="${x.image_url}" alt="전문가 사진"><div><div style="font-weight:700;font-size:13px">${i===0?'현재 노출 중':'이전 사진'}</div><p class="hint">${esc(x.title||'')}</p><button class="small danger" onclick="removePhoto('${x.id}')">삭제</button></div></div>`).join('');
+  }catch(e){box.innerHTML='<p class="hint">사진 정보를 불러오지 못했습니다.</p>'}
+}
+
+async function removePhoto(id){
+  if(!confirm('이 사진을 삭제할까요?'))return;
+  try{await req('/api/images/'+id,{method:'DELETE'});say('photoMsg','삭제했습니다.','ok');loadExpertPhotos()}
+  catch(e){say('photoMsg',e.message,'err')}
+}
+
+function onPickPhoto(input){
+  const f=input.files[0];if(!f)return;
+  if(f.size>10*1024*1024)return say('photoMsg','10MB 이하 이미지만 등록할 수 있습니다.','err');
+  const reader=new FileReader();
+  reader.onload=()=>{expertData=reader.result;document.getElementById('expertPreview').src=expertData;say('photoMsg','')};
+  reader.readAsDataURL(f);
+}
+
+async function uploadPhoto(){
+  if(!expertData)return say('photoMsg','등록할 사진을 선택해주세요.','err');
+  const btn=document.getElementById('photoSave');
+  btn.disabled=true;btn.textContent='등록 중…';
+  try{
+    const caption=document.getElementById('expertCaption').value.trim();
+    await req('/api/images/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({category:'menu',title:caption?EXPERT_TITLE+' · '+caption:EXPERT_TITLE,imageData:expertData})});
+    say('photoMsg','등록했습니다. 홈 화면에 바로 반영됩니다.','ok');
+    expertData=null;document.getElementById('expertPreview').removeAttribute('src');document.getElementById('expertCaption').value='';
+    loadExpertPhotos();
+  }catch(e){say('photoMsg',e.message,'err')}
+  finally{btn.disabled=false;btn.textContent='이 사진으로 등록'}
+}
+
+async function boot(){
+  if(!token)return login();
+  try{
+    const me=await req('/api/auth/me');
+    if(me.user.role!=='admin')return login('최고 관리자 권한이 필요합니다.');
+    const [u,sh]=await Promise.all([req('/api/admin/users'),req('/api/admin/shops')]);
+    USERS=u.users;SHOPS=sh.shops;
+    app.innerHTML=`<h1>👑 MYCOM 최고 관리자</h1>
+<p>회원과 컴퓨터 업체를 승인·정지·삭제하고, 홈 화면 노출을 관리할 수 있습니다.</p>
+<nav class="tabs">
+  <button class="tab on" id="tab-shops" onclick="showTab('shops')">🏪 업체 관리</button>
+  <button class="tab" id="tab-users" onclick="showTab('users')">👥 개인 회원 관리</button>
+  <button class="tab" id="tab-banners" onclick="showTab('banners')">🏷 배너 관리</button>
+  <button class="tab" id="tab-home" onclick="showTab('home')">🖼 메인화면 관리</button>
+</nav>
+
+<section class="card panel on" id="panel-shops">
+  <h2>업체 관리</h2>
+  <input class="search" oninput="shopBody.innerHTML=shopRows(SHOPS.filter(x=>JSON.stringify(x).toLowerCase().includes(this.value.toLowerCase())))" placeholder="업체 검색">
+  <table><thead><tr><th>업체</th><th>담당자</th><th>상태</th><th>관리</th></tr></thead><tbody id="shopBody"></tbody></table>
+</section>
+
+<section class="card panel" id="panel-users">
+  <h2>개인 회원 관리</h2>
+  <input class="search" oninput="userBody.innerHTML=userRows(USERS.filter(x=>JSON.stringify(x).toLowerCase().includes(this.value.toLowerCase())))" placeholder="회원 검색">
+  <table><thead><tr><th>이름</th><th>이메일</th><th>권한</th><th>가입일</th><th>관리</th></tr></thead><tbody id="userBody"></tbody></table>
+</section>
+
+<section class="card panel" id="panel-banners">
+  <h2>배너 관리</h2>
+  <p class="hint">홈 화면 상단 배너와 오늘의 특가 배너를 등록·수정합니다. 새 창에서 열려면 <a href="/special-banners-admin.html" target="_blank">특가 배너 관리 페이지</a>를 이용하세요.</p>
+  <iframe class="embed" src="/special-banners-admin.html" title="배너 관리"></iframe>
+</section>
+
+<section class="card panel" id="panel-home">
+  <h2>메인화면 관리</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin:6px 0 0;font-size:15px">첫 화면 문구</h3>
+      <p class="hint">홈 화면 맨 위에 보이는 제목과 소개 문구입니다. 소개 문구는 줄바꿈한 대로 표시됩니다.</p>
+      <label class="lbl" for="leadTitle">제목</label>
+      <input id="leadTitle" placeholder="어떤 도움이 필요하세요?">
+      <label class="lbl" for="leadSub">소개 문구</label>
+      <textarea id="leadSub"></textarea>
+      <button id="copySave" onclick="saveSettings()">문구 저장</button>
+      <div class="msg" id="copyMsg"></div>
+
+      <h3 style="margin:26px 0 0;font-size:15px">등록된 전문가 사진</h3>
+      <div id="expertList"><p class="hint">불러오는 중…</p></div>
+    </div>
+    <div>
+      <h3 style="margin:6px 0 0;font-size:15px">전문가 사진 등록</h3>
+      <p class="hint">세로형(가로:세로 약 7:8) 사진을 권장합니다. JPG · PNG · WEBP, 10MB 이하.</p>
+      <img class="shot" id="expertPreview" alt="미리보기">
+      <label class="drop" for="expertFile" style="margin-top:12px">사진 선택하기</label>
+      <input type="file" id="expertFile" accept="image/*" style="display:none" onchange="onPickPhoto(this)">
+      <label class="lbl" for="expertCaption">사진 설명 (관리용)</label>
+      <input id="expertCaption" placeholder="예: 2026년 9월 촬영">
+      <button id="photoSave" onclick="uploadPhoto()">이 사진으로 등록</button>
+      <div class="msg" id="photoMsg"></div>
+    </div>
+  </div>
+</section>`;
+    render();
+  }catch(e){login(e.message)}
+}
+
+async function approval(id,v){try{await req('/api/admin/shops/'+id+'/approval',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:v})});boot()}catch(e){alert(e.message)}}
+async function active(id,v){try{await req('/api/admin/shops/'+id+'/active',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:v})});boot()}catch(e){alert(e.message)}}
+async function removeMember(id,name){if(!confirm('정말 '+name+' 회원을 삭제할까요?\n삭제 후에는 복구할 수 없습니다.'))return;if(!confirm('마지막 확인: '+name+' 회원을 영구 삭제합니다.'))return;try{await req('/api/admin/users/'+id,{method:'DELETE'});alert('삭제되었습니다.');boot()}catch(e){alert(e.message)}}
+boot();
+</script>
+</body></html>

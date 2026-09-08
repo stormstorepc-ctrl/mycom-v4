@@ -47,10 +47,15 @@
 </header>
 
 <section class="lead">
-    <h1 class="lead-title">어떤 도움이 필요하세요?</h1>
     <div class="lead-intro">
-        <p class="lead-sub">MYCOM에는 검증을 거친 컴퓨터 전문점만 입점합니다.<br>조립부터 수리, 업그레이드까지<br>믿고 맡길 수 있는 전문가가 확실하게 해결해 드립니다.</p>
-        <image-slot id="leadExpert" class="lead-expert" shape="rounded" radius="12" placeholder="전문가 사진"></image-slot>
+        <div class="lead-copy">
+            <h1 class="lead-title">어떤 도움이 필요하세요?</h1>
+            <p class="lead-sub">MYCOM에는 검증을 거친 컴퓨터 전문점만 입점합니다.<br>조립부터 수리, 업그레이드까지<br>믿고 맡길 수 있는 전문가가 확실하게 해결해 드립니다.</p>
+        </div>
+        <div class="lead-expert" id="leadExpert">
+            <i class="ph ph-user-focus"></i>
+            <span>전문가 사진</span>
+        </div>
     </div>
 
     <div class="trust-strip">
@@ -133,13 +138,13 @@
     </div>
     <div class="category-grid">
         <div class="category" onclick="go('build')"><div class="category-icon"><i class="ph ph-desktop-tower"></i></div><span>PC 조립</span></div>
-        <div class="category" onclick="go('sell')"><div class="category-icon"><i class="ph ph-currency-krw"></i></div><span>PC 판매</span></div>
+        <div class="category" onclick="go('sell', true)"><div class="category-icon"><i class="ph ph-currency-krw"></i></div><span>PC 판매</span></div>
         <div class="category" onclick="go('inspection')"><div class="category-icon"><i class="ph ph-magnifying-glass"></i></div><span>중고 검수</span></div>
         <div class="category" onclick="go('shops')"><div class="category-icon"><i class="ph ph-storefront"></i></div><span>매장 찾기</span></div>
         <div class="category" onclick="go('chat')"><div class="category-icon"><i class="ph ph-chat-teardrop-dots"></i></div><span>AI 상담</span></div>
-        <div class="category" onclick="window.location.href='/ai.html?type=visit'"><div class="category-icon"><i class="ph ph-truck"></i></div><span>출장 서비스</span></div>
+        <div class="category" onclick="go('visit')"><div class="category-icon"><i class="ph ph-truck"></i></div><span>출장 서비스</span></div>
         <div class="category" onclick="go('repair')"><div class="category-icon"><i class="ph ph-wrench"></i></div><span>수리 · 업그레이드</span></div>
-        <div class="category" onclick="window.location.href='/ai.html?type=quote'"><div class="category-icon"><i class="ph ph-receipt"></i></div><span>견적 받기</span></div>
+        <div class="category" onclick="startQuoteFlow({}); go('quoteflow')"><div class="category-icon"><i class="ph ph-receipt"></i></div><span>견적 받기</span></div>
     </div>
 </section>
 
@@ -554,6 +559,81 @@
     </div>
 
     <button class="primary-btn" style="margin-top:20px" onclick="repairToQuote()">인증 업체 수리 견적 받기</button>
+
+</div>
+</div>
+
+
+<!-- ================= VISIT SERVICE ================= -->
+
+<div class="screen" id="visit">
+
+<div class="page-header">
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    출장 서비스
+</div>
+
+<div class="page-content">
+
+    <div class="page-lead">
+        <i class="ph-fill ph-truck lead-icon"></i>
+        <h2>전문가가<br>집으로 찾아갑니다</h2>
+        <p>PC를 옮기지 않고 현장에서 진단·수리·설치를 받습니다. 출장 가능 여부와 비용은 인증 업체가 견적으로 안내합니다.</p>
+    </div>
+
+    <div class="list-head">어떤 출장이 필요하세요</div>
+
+    <div class="opt-grid" id="visitTypes">
+        <button class="opt on" data-visit="현장 점검 · 진단" onclick="pickVisitType(this)"><i class="ph ph-stethoscope"></i><strong>점검 · 진단</strong><span>증상 확인, 원인 진단</span></button>
+        <button class="opt" data-visit="현장 수리 · 부품 교체" onclick="pickVisitType(this)"><i class="ph ph-wrench"></i><strong>현장 수리</strong><span>부품 교체, 재조립</span></button>
+        <button class="opt" data-visit="설치 · 세팅" onclick="pickVisitType(this)"><i class="ph ph-monitor-play"></i><strong>설치 · 세팅</strong><span>본체·모니터 설치, OS 세팅</span></button>
+        <button class="opt" data-visit="네트워크 · 주변기기" onclick="pickVisitType(this)"><i class="ph ph-wifi-high"></i><strong>네트워크</strong><span>공유기, 프린터, 케이블</span></button>
+        <button class="opt" data-visit="사무실 · 다수 PC" onclick="pickVisitType(this)"><i class="ph ph-buildings"></i><strong>사무실 다수 PC</strong><span>여러 대 정기 관리</span></button>
+        <button class="opt" data-visit="청소 · 서멀 재도포" onclick="pickVisitType(this)"><i class="ph ph-wind"></i><strong>청소 · 서멀</strong><span>내부 청소, 발열 관리</span></button>
+    </div>
+
+    <div class="schedule-grid" style="margin-top:22px">
+        <div class="form-group">
+            <label>방문 희망일</label>
+            <input class="input" id="visitDate" type="date">
+        </div>
+        <div class="form-group">
+            <label>대수</label>
+            <select class="input" id="visitCount">
+                <option value="1대">1대</option>
+                <option value="2~3대">2~3대</option>
+                <option value="4~9대">4~9대</option>
+                <option value="10대 이상">10대 이상</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>방문 지역</label>
+        <input class="input" id="visitArea" placeholder="예: 서울 강서구 화곡동">
+    </div>
+
+    <div class="form-group">
+        <label>요청 내용</label>
+        <textarea class="input" id="visitDesc" rows="7" placeholder="증상이나 필요한 작업, 사용 환경을 적어주세요."></textarea>
+    </div>
+
+    <div class="list-head" style="margin-top:22px">희망 시간</div>
+
+    <div class="time-grid" id="visitTimes">
+        <button type="button" class="time-slot on" onclick="pickVisitTime(this)">오전</button>
+        <button type="button" class="time-slot" onclick="pickVisitTime(this)">오후</button>
+        <button type="button" class="time-slot" onclick="pickVisitTime(this)">저녁</button>
+        <button type="button" class="time-slot" onclick="pickVisitTime(this)">협의</button>
+    </div>
+
+    <div class="trust-foot" style="margin-top:20px">
+        <span><i class="ph-fill ph-seal-check"></i> 인증 업체만 방문</span>
+        <span><i class="ph-fill ph-receipt"></i> 출장비 사전 안내</span>
+        <span><i class="ph-fill ph-shield-check"></i> 작업 후 3개월 보증</span>
+    </div>
+
+    <button class="primary-btn" style="margin-top:20px" onclick="visitToQuote()">출장 가능 업체 견적 받기</button>
 
 </div>
 </div>
@@ -1586,7 +1666,7 @@ function renderQuoteStep() {
     window.scrollTo(0, 0);
 }
 
-const QF_ROUTES = { '중고 PC 검수': 'inspection', '내 PC 판매': 'sell', '수리 · 업그레이드': 'repair' };
+const QF_ROUTES = { 'PC 조립 대행': 'build', '중고 PC 검수': 'inspection', '내 PC 판매': 'sell', '수리 · 업그레이드': 'repair' };
 
 function quoteStep(delta) {
     if (delta > 0 && qfStep === 1 && QF_ROUTES[qfService]) {
@@ -2113,6 +2193,40 @@ function repairToQuote() {
     });
 }
 
+
+/* ================= VISIT SERVICE ================= */
+
+let visitType = '현장 점검 · 진단';
+let visitTime = '오전';
+
+function pickVisitType(btn) {
+    document.querySelectorAll('#visitTypes .opt').forEach(b => b.classList.toggle('on', b === btn));
+    visitType = btn.dataset.visit;
+}
+
+function pickVisitTime(btn) {
+    document.querySelectorAll('#visitTimes .time-slot').forEach(b => b.classList.toggle('on', b === btn));
+    visitTime = btn.textContent;
+}
+
+function visitToQuote() {
+    const area = document.getElementById('visitArea').value.trim();
+    const date = document.getElementById('visitDate').value;
+    const count = document.getElementById('visitCount').value;
+    const desc = document.getElementById('visitDesc').value.trim();
+    if (!area) return showToast('방문 지역을 입력해주세요.');
+    if (!desc) return showToast('요청 내용을 적어주세요.');
+    startQuoteFlow({
+        service: '수리 · 업그레이드',
+        step: 2,
+        lastStep: 2,
+        title: `[출장] ${visitType} · ${area}`,
+        description: `출장 유형: ${visitType}\n방문 지역: ${area}\n대수: ${count}`
+            + (date ? `\n희망일: ${date}` : '')
+            + `\n희망 시간: ${visitTime}\n\n${desc}`
+    });
+}
+
 /* ================= CHAT ================= */
 
 async function sendMessage() {
@@ -2321,6 +2435,45 @@ async function loadHeroImages() {
     });
 }
 
+
+/* ================= 홈 문구 (관리자 수정) ================= */
+
+async function loadHomeCopy() {
+    try {
+        const r = await fetch('/api/site-settings', { cache: 'no-store' });
+        if (!r.ok) return;
+        const s = (await r.json()).settings || {};
+        if (s.home_lead_title) {
+            const t = document.querySelector('.lead-title');
+            if (t) t.textContent = s.home_lead_title;
+        }
+        if (s.home_lead_sub) {
+            const p = document.querySelector('.lead-sub');
+            if (p) p.innerHTML = String(s.home_lead_sub).split('\n').map(line => esc(line)).join('<br>');
+        }
+    } catch (e) { /* 저장된 문구가 없으면 기본 문구를 유지합니다 */ }
+}
+
+/* ================= 전문가 사진 (관리자 등록) ================= */
+
+async function loadExpertPhoto() {
+    const box = document.getElementById('leadExpert');
+    if (!box) return;
+    const pick = list => (list || []).find(x => /전문가/.test(String(x.title || ''))) || (list || [])[0];
+    let img = null;
+    for (const type of ['menu', 'banner']) {
+        try {
+            const r = await fetch('/api/images/featured/' + type, { cache: 'no-store' });
+            if (!r.ok) continue;
+            const found = pick((await r.json()).images);
+            if (found && found.image_url && /전문가/.test(String(found.title || ''))) { img = found; break; }
+        } catch (e) { /* 등록된 사진이 없으면 자리표시를 유지합니다 */ }
+    }
+    if (!img) return;
+    box.classList.add('has-photo');
+    box.innerHTML = '<img src="' + img.image_url + '" alt="' + esc(img.title || 'MYCOM 인증 전문가') + '">';
+}
+
 /* ================= INIT ================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2328,10 +2481,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadHomeData();
     loadSpecialDeals();
     loadHeroImages();
+    loadExpertPhoto();
+    loadHomeCopy();
 });
 
 </script>
 
-<script src="image-slot.js"></script>
 </body>
 </html>
