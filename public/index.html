@@ -1404,21 +1404,23 @@ function renderShopDetail(s) {
 
     <div class="block">
         <div class="block-title">인증 내역</div>
-        <div class="cert-row">
-            <i class="ph-fill ph-check-circle"></i>
-            <div><strong>사업자 실명 확인</strong><span>국세청 사업자등록번호 대조 완료${s.business_number ? ' · ' + esc(String(s.business_number).replace(/^(\d{3})(\d{2})(\d{5})$/, '$1-$2-$3')) : ''}</span></div>
-        </div>
-        <div class="cert-row">
-            <i class="ph-fill ph-check-circle"></i>
-            <div><strong>기술 자격 검증</strong><span>정비 이력과 사업장 실사를 마친 매장입니다</span></div>
-        </div>
-        <div class="cert-row">
-            <i class="ph-fill ph-check-circle"></i>
-            <div><strong>가격 보증제 가입</strong><span>견적가 초과 청구 시 MYCOM이 차액을 보상합니다</span></div>
-        </div>
-        <div class="cert-row">
-            <i class="ph-fill ph-check-circle"></i>
-            <div><strong>MYCOM 심사 통과</strong><span>${esc(since)}부터 인증 매장으로 활동 중</span></div>
+        <div class="cert-list">
+            <div class="cert-row">
+                <i class="ph-fill ph-check-circle"></i>
+                <div><strong>사업자 실명 확인</strong><span class="val">${s.business_number ? '사업자등록번호 ' + esc(String(s.business_number).replace(/^(\d{3})-?(\d{2})-?(\d{5})$/, '$1-$2-$3')) : '국세청 사업자등록 대조 완료'}</span></div>
+            </div>
+            <div class="cert-row">
+                <i class="ph-fill ph-check-circle"></i>
+                <div><strong>기술 자격 검증</strong><span>정비 이력 · 사업장 실사 완료</span></div>
+            </div>
+            <div class="cert-row">
+                <i class="ph-fill ph-check-circle"></i>
+                <div><strong>가격 보증제 가입</strong><span>견적가 초과 청구 시 차액 보상</span></div>
+            </div>
+            <div class="cert-row">
+                <i class="ph-fill ph-check-circle"></i>
+                <div><strong>MYCOM 심사 통과</strong><span class="val">${esc(since)}부터 인증 매장</span></div>
+            </div>
         </div>
     </div>
 
@@ -1446,21 +1448,27 @@ function renderShopDetail(s) {
     </div>
 
     <div class="detail-actions">
-        <button class="secondary-btn" onclick="openShopChat('${esc(s.id)}')"><i class="ph ph-chat-circle"></i> 업체와 상담</button>
+        <button class="secondary-btn" onclick="openShopChat('${esc(s.id)}', null, this)"><i class="ph ph-chat-circle"></i> 업체와 상담</button>
         <button class="primary-btn" onclick="location.href='/reserve.html?shop=${esc(s.id)}'">방문 예약</button>
     </div>`;
 }
 
 /* ================= 업체 직접 상담 (AI 아님) ================= */
 
-async function openShopChat(shopId, quoteId) {
+async function openShopChat(shopId, quoteId, btn) {
     if (!token) { showToast('로그인 후 상담할 수 있습니다.'); return showLogin(); }
-    showToast('상담방을 여는 중입니다…');
+    const el = btn || (typeof event !== 'undefined' ? event.currentTarget : null);
+    const original = el ? el.innerHTML : '';
+    if (el) { el.disabled = true; el.innerHTML = '<i class="ph ph-circle-notch"></i> 연결 중…'; }
     try {
         const d = await apiCall('/chat/rooms', 'POST', { shop_id: shopId, quote_id: quoteId || null });
-        location.href = '/chat.html?room=' + encodeURIComponent(d.room.id);
+        const roomId = d && d.room && d.room.id;
+        if (!roomId) throw new Error('상담방 정보를 받지 못했습니다.');
+        location.href = '/chat.html?room=' + encodeURIComponent(roomId);
     } catch (e) {
+        console.error('상담 연결 실패:', e);
         showToast(e.message || '상담 연결에 실패했습니다.');
+        if (el) { el.disabled = false; el.innerHTML = original; }
     }
 }
 

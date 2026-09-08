@@ -1047,8 +1047,8 @@ a:hover { color: var(--primary-dark); }
 
 /* ================= 업체 상세 ================= */
 
-.detail-hero { height: 176px; background: #EEF1F4; display: grid; place-items: center; color: #A8AFB8; font-size: 30px; }
-.detail-hero img { width: 100%; height: 100%; object-fit: cover; }
+.detail-hero { position: relative; height: 190px; overflow: hidden; background: #EEF1F4; display: grid; place-items: center; color: #A8AFB8; font-size: 30px; }
+.detail-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .detail-head { padding: 18px 20px 16px; border-bottom: 1px solid var(--line); }
 .detail-name { display: flex; align-items: center; gap: 6px; font-size: 21px; font-weight: 800; letter-spacing: -.8px; }
 .detail-sub { margin-top: 6px; font-size: 13px; color: var(--sub); line-height: 1.55; }
@@ -1056,11 +1056,13 @@ a:hover { color: var(--primary-dark); }
 .block { padding: 20px; border-bottom: 1px solid var(--line); }
 .block-title { font-size: 13px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 12px; }
 
-.cert-row { display: flex; align-items: flex-start; gap: 11px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.cert-row:last-child { border-bottom: 0; padding-bottom: 0; }
-.cert-row > i { font-size: 18px; color: #12B886; flex: none; line-height: 1.2; }
-.cert-row strong { display: block; font-size: 13.5px; font-weight: 600; }
-.cert-row span { display: block; margin-top: 2px; font-size: 12.5px; color: var(--sub); }
+.cert-list { display: flex; flex-direction: column; }
+.cert-row { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; }
+.cert-row + .cert-row { border-top: 1px solid var(--hair); }
+.cert-row > i { font-size: 15px; color: #12B886; flex: none; transform: translateY(2px); }
+.cert-row strong { display: block; font-size: 13.5px; font-weight: 600; letter-spacing: -.3px; }
+.cert-row span { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--sub); }
+.cert-row .val { font-variant-numeric: tabular-nums; }
 
 .pro-card { display: flex; gap: 13px; align-items: center; }
 .pro-avatar { width: 52px; height: 52px; border-radius: 50%; background: #EDF3FE; display: grid; place-items: center; color: var(--primary); font-size: 24px; flex: none; }
