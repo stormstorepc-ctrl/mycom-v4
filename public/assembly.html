@@ -5,18 +5,38 @@ body{margin:0;background:#F4F6F8;color:#16181C;font-family:"Pretendard Variable"
 .hero h1{margin:0;font-size:25px;letter-spacing:-.5px}
 .hero p{opacity:.85;font-size:14px;line-height:1.65;margin:10px 0 0}
 .hero .tagline{display:inline-block;background:#1F6FE5;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:900;margin-bottom:12px}
-.body{padding:20px 16px}
+.body{padding:20px 16px 120px}
 .card{background:#fff;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #16181C0b}
 .card h3{margin:0 0 12px;font-size:17px}
-.svc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.svc div{background:#EAF2FE;border-radius:14px;padding:13px;font-size:13px;font-weight:800;line-height:1.5}
-.svc span{display:block;font-size:11px;color:#6B7684;font-weight:600;margin-top:4px}
+.hint{font-size:12px;color:#6B7684;line-height:1.7}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.type{text-align:left;border:2.5px solid #E6E9EE;background:#fff;border-radius:16px;padding:14px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}
+.type.sel{border-color:#1F6FE5;background:#F5F9FF}
+.type i{font-size:22px;color:#1F6FE5}
+.type b{display:block;font-size:14px;margin:6px 0 3px}
+.type small{display:block;font-size:11px;color:#6B7684;line-height:1.5;min-height:30px}
+.type .won{display:block;margin-top:8px;font-size:13px;font-weight:900;color:#1558BD}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-top:1px solid #F0F2F5}
+.opt:first-of-type{border-top:0}
+.opt input[type=checkbox]{width:21px;height:21px;flex:none;margin:1px 0 0;accent-color:#1F6FE5}
+.opt .t{flex:1;min-width:0;font-size:14px;font-weight:800;line-height:1.5}
+.opt .t small{display:block;font-size:11.5px;color:#6B7684;font-weight:600;margin-top:3px;line-height:1.6}
+.opt .w{flex:none;font-size:13px;font-weight:900;color:#1558BD;white-space:nowrap;padding-top:1px}
+.opt .w.inc{color:#0E8A5F}
+.radio{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.radio label{display:flex;align-items:center;gap:10px;border:2px solid #E6E9EE;border-radius:14px;padding:12px;font-size:13.5px;font-weight:800;cursor:pointer;margin:0}
+.radio label.sel{border-color:#1F6FE5;background:#F5F9FF}
+.radio input{width:19px;height:19px;accent-color:#1F6FE5;flex:none}
+.radio .w{margin-left:auto;font-size:13px;font-weight:900;color:#1558BD}
+.radio .w.inc{color:#0E8A5F}
 .step{display:flex;gap:12px;margin:12px 0;font-size:14px;line-height:1.6;align-items:flex-start}
 .step .num{flex:none;width:26px;height:26px;border-radius:50%;background:#1F6FE5;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:900}
 .step .txt b{color:#1558BD}
-.notice{font-size:12px;color:#6B7684;line-height:1.7;background:#F4F6F8;border-radius:14px;padding:14px}
-label{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}
-.input,select,textarea{width:100%;box-sizing:border-box;border:1px solid #E6E9EE;border-radius:12px;padding:13px;font-size:15px;background:#fff;font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.fan{display:flex;align-items:center;gap:10px;margin-top:10px}
+.fan button{width:40px;height:40px;border:1px solid #E6E9EE;background:#fff;border-radius:12px;font-size:17px;font-weight:900;cursor:pointer;color:#1558BD}
+.fan b{min-width:52px;text-align:center;font-size:15px}
+label.lbl{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}
+.input,select,textarea{width:100%;box-sizing:border-box;border:1px solid #E6E9EE;border-radius:12px;padding:13px;font-size:15px;background:#fff;font-family:inherit}
 textarea{min-height:90px;resize:vertical}
 .shop{display:flex;gap:13px;align-items:center;background:#fff;border-radius:18px;padding:13px;margin-bottom:11px;box-shadow:0 4px 16px #16181C09;border:2.5px solid transparent;cursor:pointer;transition:border-color .15s}
 .shop.sel{border-color:#1F6FE5;box-shadow:0 6px 20px #1F6FE522}
@@ -28,7 +48,17 @@ textarea{min-height:90px;resize:vertical}
 .shop.sel .ck{display:inline}
 .shop .mt{font-size:12px;color:#6B7684;margin-top:3px}
 .shop .rt{font-size:12px;color:#B26A00;font-weight:800;margin-top:3px}
-.submit{width:100%;padding:17px;border:0;border-radius:16px;background:#1F6FE5;color:#fff;font-weight:900;font-size:17px;cursor:pointer}
+.sumRows{font-size:13.5px;line-height:2}
+.sumRows div{display:flex;justify-content:space-between;gap:12px}
+.sumRows div span{color:#6B7684}
+.sumRows .tot{border-top:1px solid #E6E9EE;margin-top:8px;padding-top:10px;font-size:16px;font-weight:900}
+.sumRows .tot span{color:#16181C}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #E6E9EE;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -6px 20px #16181C0f}
+.bar .barIn{max-width:720px;margin:auto;display:flex;align-items:center;gap:12px;width:100%}
+.bar .lab{font-size:11.5px;color:#6B7684;font-weight:700}
+.bar .val{font-size:19px;font-weight:900;letter-spacing:-.4px}
+.submit{flex:none;padding:15px 20px;border:0;border-radius:15px;background:#1F6FE5;color:#fff;font-weight:900;font-size:15px;cursor:pointer}
+.submit:disabled{opacity:.6}
 .aiBtn{width:100%;margin-top:10px;padding:15px;border:2px dashed #1F6FE5;border-radius:16px;background:#EAF2FE;color:#1558BD;font-weight:900;font-size:15px;cursor:pointer}
 .msg{margin-top:10px;font-size:13px;font-weight:800;color:#D6006C}
 .back{border:0;background:#ffffff22;color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer}
@@ -43,49 +73,164 @@ textarea{min-height:90px;resize:vertical}
 <div class="hero"><button class="back" onclick="history.back()">← 뒤로</button>
 <div style="margin-top:14px"><span class="tagline"><i class="ph ph-wrench"></i> 인증 매장 전문가 조립</span>
 <h1>PC 조립 대행 의뢰</h1>
-<p>부품 정보 적기 → 매장 선택 → 날짜·시간 선택 → 의뢰 완료!</p></div></div>
+<p>조립 유형과 옵션을 고르면 예상 공임이 바로 계산됩니다.</p></div></div>
 <div class="body">
-<section class="card"><h3><i class="ph-fill ph-sparkle"></i> 이런 걸 해드립니다</h3>
-<div class="svc"><div><i class="ph ph-nut"></i> 전수 조립<span>부품 장착 + 마무리 조립</span></div><div><i class="ph ph-broom"></i> 케이블 정리<span>내부 선정리 깔끔하게</span></div><div><i class="ph ph-hard-drives"></i> 윈도우 설치<span>OS + 드라이버 세팅</span></div><div><i class="ph-fill ph-check-circle"></i> 안정화 테스트<span>출고 전 부하·발열 점검</span></div></div></section>
+
 <section class="card"><h3><i class="ph ph-clipboard-text"></i> 진행 순서</h3>
-<div class="step"><span class="num">1</span><span class="txt">아래에 <b>부품 정보</b>를 적어주세요.</span></div>
-<div class="step"><span class="num">2</span><span class="txt">가까운 <b>인증 매장</b>을 선택해주세요.</span></div>
-<div class="step"><span class="num">3</span><span class="txt">원하는 <b>날짜와 시간</b>을 고르고 의뢰합니다.</span></div>
-<div class="step"><span class="num">4</span><span class="txt">매장이 수락하면 알림이 갑니다. 상담 후 부품을내면 조립 시작!</span></div></section>
+<div class="step"><span class="num">1</span><span class="txt"><b>조립 유형</b>과 옵션을 선택합니다.</span></div>
+<div class="step"><span class="num">2</span><span class="txt">조립할 <b>부품 내역</b>을 적습니다.</span></div>
+<div class="step"><span class="num">3</span><span class="txt">가까운 <b>인증 매장</b>과 희망 날짜를 고릅니다.</span></div>
+<div class="step"><span class="num">4</span><span class="txt">매장이 수락하면 알림이 갑니다. 부품을 전달하면 조립 시작!</span></div></section>
 
-<section class="card"><h3>1⃣ 조립할 부품 정보</h3>
-<label>부품 준비 상태</label>
+<section class="card"><h3>1. 조립 유형</h3>
+<p class="hint" style="margin:0 0 12px">유형별 기본 공임입니다. 부품값은 포함되지 않습니다.</p>
+<div class="types" id="types">
+  <button type="button" class="type sel" data-key="high" data-price="70000"><i class="ph ph-lightning"></i><b>고사양 PC</b><small>게이밍 · 영상편집 · AI 작업용 고발열 구성</small><span class="won">70,000원</span></button>
+  <button type="button" class="type" data-key="office" data-price="40000"><i class="ph ph-briefcase"></i><b>사무용 PC</b><small>문서 · 웹 중심의 표준 구성</small><span class="won">40,000원</span></button>
+  <button type="button" class="type" data-key="custom" data-price="300000"><i class="ph ph-drop"></i><b>커스텀 수냉</b><small>수냉 블록 · 라디에이터 · 튜빙 전체 시공</small><span class="won">300,000원부터</span></button>
+  <button type="button" class="type" data-key="itx" data-price="90000"><i class="ph ph-cube"></i><b>ITX 미니PC</b><small>소형 케이스 · 좁은 공간 배선 난이도 반영</small><span class="won">90,000원</span></button>
+</div>
+</section>
+
+<section class="card"><h3>2. 쿨링 방식</h3>
+<div class="radio" id="cool">
+  <label class="sel"><input type="radio" name="cool" value="air" data-price="0" checked><span>공랭 쿨러</span><span class="w inc">기본 포함</span></label>
+  <label><input type="radio" name="cool" value="aio" data-price="30000"><span>일체형 수냉(AIO) 장착</span><span class="w">+30,000원</span></label>
+  <label id="coolCustomRow"><input type="radio" name="cool" value="custom" data-price="0"><span>커스텀 수냉 시공</span><span class="w inc">유형 공임에 포함</span></label>
+</div>
+<div style="border-top:1px solid #F0F2F5;margin-top:14px;padding-top:14px">
+  <div style="font-size:14px;font-weight:800">케이스 팬 추가</div>
+  <p class="hint" style="margin:3px 0 0">케이스 기본 장착 팬 외에 추가로 달 팬 수량입니다. 개당 8,000원(장착 공임, 팬 부품값 별도).</p>
+  <div class="fan">
+    <button type="button" onclick="fan(-1)">−</button><b id="fanCount">0개</b><button type="button" onclick="fan(1)">+</button>
+    <span class="hint" id="fanWon" style="margin-left:auto">0원</span>
+  </div>
+</div>
+</section>
+
+<section class="card"><h3>3. 소프트웨어 · 세팅 옵션</h3>
+<div id="opts">
+  <label class="opt"><input type="checkbox" data-key="bios" data-price="20000"><span class="t">바이오스(BIOS) 업데이트<small>최신 CPU·메모리 호환성 확보. 부팅 불가 위험이 있어 매장 작업을 권장합니다.</small></span><span class="w">+20,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="win" data-price="30000"><span class="t">윈도우 설치<small>설치 · 최신 업데이트 · 계정 설정까지. 정품 라이선스 비용은 별도입니다.</small></span><span class="w">+30,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="driver" data-price="10000"><span class="t">드라이버 · 필수 유틸 설치<small>칩셋 · 그래픽 드라이버, 모니터링 프로그램 세팅</small></span><span class="w">+10,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="xmp" data-price="10000"><span class="t">메모리 XMP · EXPO 적용<small>램 정격 속도 활성화 및 안정성 확인</small></span><span class="w">+10,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="burn" data-price="20000"><span class="t">부하 · 안정성 테스트<small>3시간 부하 테스트로 발열과 전원 안정성 점검</small></span><span class="w">+20,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="cable" data-price="50000"><span class="t">커스텀 선정리 · 슬리빙<small>기본 선정리는 모든 조립에 포함됩니다. 슬리빙 케이블 교체 작업입니다.</small></span><span class="w">+50,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="migrate" data-price="20000"><span class="t">기존 PC 부품 · 데이터 이관<small>쓰던 저장장치 옮기고 자료 그대로 유지</small></span><span class="w">+20,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="buy" data-price="30000"><span class="t">부품 구매 대행<small>견적 상담 후 매장이 부품을 대신 구매합니다. 부품값 별도.</small></span><span class="w">+30,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="visit" data-price="50000"><span class="t">출장 조립<small>집이나 사무실에서 조립. 지역에 따라 추가될 수 있습니다.</small></span><span class="w">+50,000원</span></label>
+  <label class="opt"><input type="checkbox" data-key="ship" data-price="20000"><span class="t">택배 발송 포장<small>완성 PC 안전 포장 후 발송. 운송비는 별도입니다.</small></span><span class="w">+20,000원</span></label>
+</div>
+</section>
+
+<section class="card"><h3>4. 조립할 부품 정보</h3>
+<label class="lbl">부품 준비 상태</label>
 <select id="ownType" class="input"><option value="부품 직접 보유">부품을 이미 가지고 있어요</option><option value="부품 구매부터 상담 희망">부품 구매부터 상담받고 싶어요</option><option value="일부 부품만 보유">일부 부품만 가지고 있어요</option></select>
-<label>조립할 부품 내역 <span style="color:#D6006C">*</span></label>
-<textarea id="parts" placeholder="예) CPU: Ryzen 7 7800X3D / 보드: B650M / RAM: DDR5 32G / 그래픽: RTX 5070 Ti / 파워: 850W"></textarea>
-<label>추가 요청 사항 (선택)</label>
-<textarea id="extra" placeholder="예) 윈도우 11 설치 부탁드립니다. 수랭쿨러 장착 경험 있는 매장이면 좋겠어요."></textarea></section>
+<label class="lbl">조립할 부품 내역 <span style="color:#D6006C">*</span></label>
+<textarea id="parts" placeholder="예) CPU: Ryzen 7 7800X3D / 보드: B650M / RAM: DDR5 32G / 그래픽: RTX 5070 Ti / 파워: 850W / 케이스: O11D"></textarea>
+<label class="lbl">추가 요청 사항 (선택)</label>
+<textarea id="extra" placeholder="예) 팬 방향은 흡기로 맞춰주세요. 소음에 민감합니다."></textarea>
+</section>
 
-<section class="card"><h3>2⃣ 매장 선택 <span style="font-size:12px;color:#6B7684;font-weight:600">(가장 가까운 순서)</span></h3>
+<section class="card"><h3>5. 매장 선택 <span style="font-size:12px;color:#6B7684;font-weight:600">(가까운 순서)</span></h3>
 <div id="shopList"><div class="empty">가까운 매장을 찾는 중입니다…</div></div></section>
 
-<section class="card"><h3>3⃣ 희망 날짜 · 시간</h3>
+<section class="card"><h3>6. 희망 날짜 · 시간</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<div><label>날짜</label><input type="date" id="date" class="input"></div>
-<div><label>시간</label><select id="time" class="input"></select></div></div>
-<p style="font-size:12px;color:#6B7684;margin:10px 0 0">※ 희망 시간이며, 매장 수락 후 확정됩니다.</p></section>
+<div><label class="lbl">날짜</label><input type="date" id="date" class="input"></div>
+<div><label class="lbl">시간</label><select id="time" class="input"></select></div></div>
+<p class="hint" style="margin:10px 0 0">희망 시간이며, 매장 수락 후 확정됩니다.</p></section>
 
-<button class="submit" id="submitBtn"><i class="ph ph-rocket-launch"></i> 조립대행 의뢰 보내기</button>
+<section class="card"><h3>예상 공임</h3>
+<div class="sumRows" id="sumRows"></div>
+<p class="hint" style="margin:12px 0 0">부품값과 윈도우 라이선스, 택배 운송비는 포함되지 않습니다. 매장마다 공임 기준이 달라 수락 시 최종 금액이 조정될 수 있습니다.</p>
+</section>
+
 <div class="msg" id="msg"></div>
-<button class="aiBtn" onclick="location.href='/ai.html?type=assembly'"><i class="ph ph-chat-circle"></i> 매장이 안 보이거나 고민되면, AI에게 조립 상담받기</button>
+<button class="aiBtn" onclick="location.href='/ai.html?type=assembly'"><i class="ph ph-chat-circle"></i> 어떤 옵션이 필요할지 모르겠다면, AI에게 조립 상담받기</button>
 </div>
+
+<div class="bar"><div class="barIn">
+  <div><div class="lab">예상 공임</div><div class="val" id="barTotal">70,000원</div></div>
+  <button class="submit" id="submitBtn" style="margin-left:auto"><i class="ph ph-rocket-launch"></i> 의뢰 보내기</button>
+</div></div>
+
 <script>
 (function(){
-var q=new URLSearchParams(location.search);
 var list=document.getElementById('shopList'),msg=document.getElementById('msg');
-var selectedShop=null,shops=[];
+var selectedShop=null,shops=[],fanCount=0;
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
+var won=function(n){return Number(n||0).toLocaleString('ko-KR')+'원'};
 function token(){return localStorage.getItem('mycom_token')||localStorage.getItem('token')||''}
+
+var FAN_UNIT=8000;
+var TYPE_LABEL={high:'고사양 PC',office:'사무용 PC',custom:'커스텀 수냉',itx:'ITX 미니PC'};
+var COOL_LABEL={air:'공랭 쿨러(기본 포함)',aio:'일체형 수냉(AIO) 장착',custom:'커스텀 수냉 시공(유형 공임 포함)'};
+
+function selectedType(){return document.querySelector('.type.sel')}
+function selectedCool(){return document.querySelector('input[name=cool]:checked')}
+
+/* 조립 유형 선택 */
+document.getElementById('types').addEventListener('click',function(e){
+  var b=e.target.closest('.type');if(!b)return;
+  document.querySelectorAll('.type').forEach(function(x){x.classList.remove('sel')});
+  b.classList.add('sel');
+  // 커스텀 수냉 유형은 수냉 시공이 공임에 포함됩니다.
+  var isCustom=b.dataset.key==='custom';
+  var customRadio=document.querySelector('input[name=cool][value=custom]');
+  document.getElementById('coolCustomRow').style.display=isCustom?'':'none';
+  if(isCustom)customRadio.checked=true;
+  else if(customRadio.checked)document.querySelector('input[name=cool][value=air]').checked=true;
+  syncCool();calc();
+});
+
+/* 쿨링 방식 */
+function syncCool(){
+  document.querySelectorAll('#cool label').forEach(function(l){l.classList.toggle('sel',l.querySelector('input').checked)});
+}
+document.getElementById('cool').addEventListener('change',function(){syncCool();calc()});
+document.getElementById('coolCustomRow').style.display='none';
+
+/* 케이스 팬 */
+window.fan=function(d){
+  fanCount=Math.min(10,Math.max(0,fanCount+d));
+  document.getElementById('fanCount').textContent=fanCount+'개';
+  document.getElementById('fanWon').textContent=won(fanCount*FAN_UNIT);
+  calc();
+};
+
+document.getElementById('opts').addEventListener('change',calc);
+
+/* 합계 계산 */
+function lineItems(){
+  var t=selectedType(),c=selectedCool(),rows=[];
+  rows.push({name:TYPE_LABEL[t.dataset.key]+' 기본 공임',price:Number(t.dataset.price)});
+  if(c&&Number(c.dataset.price))rows.push({name:COOL_LABEL[c.value],price:Number(c.dataset.price)});
+  if(fanCount)rows.push({name:'케이스 팬 추가 '+fanCount+'개',price:fanCount*FAN_UNIT});
+  document.querySelectorAll('#opts input:checked').forEach(function(x){
+    rows.push({name:x.closest('.opt').querySelector('.t').childNodes[0].textContent.trim(),price:Number(x.dataset.price)});
+  });
+  return rows;
+}
+
+function calc(){
+  var rows=lineItems();
+  var total=rows.reduce(function(a,b){return a+b.price},0);
+  document.getElementById('sumRows').innerHTML=rows.map(function(r){
+    return '<div><span>'+esc(r.name)+'</span><b>'+won(r.price)+'</b></div>';
+  }).join('')+'<div class="tot"><span>합계</span><b>'+won(total)+'</b></div>';
+  document.getElementById('barTotal').textContent=won(total);
+  return {rows:rows,total:total};
+}
+
+/* 날짜 · 시간 */
 var tm=document.getElementById('time'),opts='';
 for(var h=10;h<=19;h++){['00','30'].forEach(function(mm){if(h===19&&mm==='30')return;var v=h+':'+mm;opts+='<option value="'+v+'">'+v+'</option>'})}
 tm.innerHTML=opts;
 var d=document.getElementById('date'),pad=function(n){return (n<10?'0':'')+n},fmt=function(x){return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate())};
 var now=new Date();d.min=fmt(now);d.value=fmt(now);var mx=new Date();mx.setDate(mx.getDate()+30);d.max=fmt(mx);
+
+/* 매장 목록 */
 function photo(s){var arr=s.shop_images;if(typeof arr==='string'){try{arr=JSON.parse(arr)}catch(e){arr=[]}}if(!Array.isArray(arr))arr=[];return String(s.cover_image||arr[0]||'').trim()}
 function render(){
  if(!shops.length){list.innerHTML='<div class="empty">주변 승인 매장이 아직 없습니다.<br>승인 완료된 매장만 이곳에 표시됩니다.</div>';return}
@@ -96,6 +241,8 @@ function loadPlain(){fetch('/api/shops',{cache:'no-store'}).then(function(r){ret
 function fallback(){fetch('/api/shops?radius=100&sort=rating',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){if(dd.shops&&dd.shops.length){shops=dd.shops;render()}else loadPlain()}).catch(loadPlain)}
 function nearby(lat,lon){fetch('/api/shops?latitude='+lat+'&longitude='+lon+'&radius=40&sort=distance',{cache:'no-store'}).then(function(r){return r.json()}).then(function(dd){if(dd.shops&&dd.shops.length){shops=dd.shops;render()}else fallback()}).catch(fallback)}
 if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){nearby(p.coords.latitude,p.coords.longitude)},fallback,{maximumAge:300000,timeout:6000})}else{fallback()}
+
+/* 의뢰 전송 */
 document.getElementById('submitBtn').onclick=function(){
  msg.textContent='';
  var parts=document.getElementById('parts').value.trim();
@@ -105,16 +252,25 @@ document.getElementById('submitBtn').onclick=function(){
  if(!selectedShop){msg.textContent='의뢰할 매장을 선택해주세요.';return}
  if(!d.value||!tm.value){msg.textContent='날짜와 시간을 선택해주세요.';return}
  if(!token()){alert('로그인이 필요합니다.');location.href='/';return}
- var note='[조립대행 의뢰]\n부품 준비: '+own+'\n조립 부품 내역:\n'+parts+(extra?'\n추가 요청: '+extra:'');
- var body={shop_id:selectedShop,service_type:'PC 조립 대행',reservation_date:d.value,reservation_time:tm.value,notes:note};
- var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='⏳ 의뢰 전송 중...';
+ var sum=calc();
+ var breakdown=sum.rows.map(function(r){return '· '+r.name+' '+won(r.price)}).join('\n');
+ var note='[조립대행 의뢰]\n조립 유형: '+TYPE_LABEL[selectedType().dataset.key]
+   +'\n쿨링: '+COOL_LABEL[selectedCool().value]
+   +'\n케이스 팬 추가: '+fanCount+'개'
+   +'\n\n[선택 옵션 · 예상 공임]\n'+breakdown+'\n합계 '+won(sum.total)+' (부품값 별도)'
+   +'\n\n부품 준비: '+own+'\n조립 부품 내역:\n'+parts+(extra?'\n\n추가 요청: '+extra:'');
+ var body={shop_id:selectedShop,service_type:'PC 조립 대행',reservation_date:d.value,reservation_time:tm.value,notes:note,estimated_price:sum.total};
+ var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='의뢰 전송 중…';
  fetch('/api/reservations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token()},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(x){
   if(r.status===401){alert('로그인이 필요합니다.');location.href='/';throw 0}
   if(!r.ok)throw new Error(x.error||'의뢰에 실패했습니다.');
   var shop=shops.find(function(s){return s.id===selectedShop})||{};
-  document.querySelector('.body').innerHTML='<div class="card"><div class="done"><div class="icon"><i class="ph-fill ph-check-circle"></i></div><h2 style="margin:10px 0 4px">조립대행 의뢰 완료!</h2><p style="color:#6B7684;font-size:13px;margin:0">선택하신 매장에 의뢰와 알림이 전달되었습니다.</p><div class="sum"><i class="ph ph-storefront"></i> <b>'+esc(shop.shop_name||'')+'</b><br><i class="ph ph-calendar-blank"></i> '+body.reservation_date+' '+body.reservation_time+'<br><i class="ph ph-package"></i> '+esc(parts).slice(0,80)+(parts.length>80?'…':'')+'</div><p style="color:#6B7684;font-size:13px">매장이 <b>수락</b>하면 알림으로 알려드립니다.<br>내 활동 → 예약 내역에서 진행 상태를 확인하세요.</p><div class="btnrow"><button class="g" onclick="location.href=\'/\'">홈으로</button><button class="p" onclick="location.href=\'/my-activity.html?tab=reservations\'">내 예약 확인</button></div></div></div>';
- })}).catch(function(e){if(e)msg.textContent=e.message||'의뢰 중 오류가 발생했습니다.'}).finally(function(){btn.disabled=false;btn.innerHTML='<i class="ph ph-rocket-launch"></i> 조립대행 의뢰 보내기'});
+  document.querySelector('.bar').style.display='none';
+  document.querySelector('.body').innerHTML='<div class="card"><div class="done"><div class="icon"><i class="ph-fill ph-check-circle"></i></div><h2 style="margin:10px 0 4px">조립대행 의뢰 완료!</h2><p style="color:#6B7684;font-size:13px;margin:0">선택하신 매장에 의뢰와 알림이 전달되었습니다.</p><div class="sum"><i class="ph ph-storefront"></i> <b>'+esc(shop.shop_name||'')+'</b><br><i class="ph ph-calendar-blank"></i> '+body.reservation_date+' '+body.reservation_time+'<br><i class="ph ph-wrench"></i> '+esc(TYPE_LABEL[selectedType().dataset.key])+' · 예상 공임 '+won(sum.total)+'<br><i class="ph ph-package"></i> '+esc(parts).slice(0,80)+(parts.length>80?'…':'')+'</div><p style="color:#6B7684;font-size:13px">매장이 <b>수락</b>하면 알림으로 알려드립니다.<br>내 활동 → 예약 내역에서 진행 상태를 확인하세요.</p><div class="btnrow"><button class="g" onclick="location.href=\'/\'">홈으로</button><button class="p" onclick="location.href=\'/my-activity.html?tab=reservations\'">내 예약 확인</button></div></div></div>';
+ })}).catch(function(e){if(e)msg.textContent=e.message||'의뢰 중 오류가 발생했습니다.'}).finally(function(){btn.disabled=false;btn.innerHTML='<i class="ph ph-rocket-launch"></i> 의뢰 보내기'});
 };
+
+syncCool();calc();
 })();
 </script>
 </body></html>

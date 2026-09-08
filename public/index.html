@@ -144,7 +144,7 @@
         <div class="category" onclick="go('chat')"><div class="category-icon"><i class="ph ph-chat-teardrop-dots"></i></div><span>AI 상담</span></div>
         <div class="category" onclick="go('visit')"><div class="category-icon"><i class="ph ph-truck"></i></div><span>출장 서비스</span></div>
         <div class="category" onclick="go('repair')"><div class="category-icon"><i class="ph ph-wrench"></i></div><span>수리 · 업그레이드</span></div>
-        <div class="category" onclick="startQuoteFlow({}); go('quoteflow')"><div class="category-icon"><i class="ph ph-receipt"></i></div><span>견적 받기</span></div>
+        <div class="category" onclick="location.href='/assembly.html'"><div class="category-icon"><i class="ph ph-wrench"></i></div><span>조립 대행</span></div>
     </div>
 </section>
 
@@ -633,7 +633,7 @@
             <button class="opt on" data-service="PC 조립 대행" onclick="pickOpt(this)"><i class="ph ph-desktop-tower"></i><strong>PC 조립</strong><span>부품 구매 후 조립·세팅</span></button>
             <button class="opt" data-service="수리 · 업그레이드" onclick="pickOpt(this)"><i class="ph ph-wrench"></i><strong>수리 · 업그레이드</strong><span>고장 진단, 부품 교체</span></button>
             <button class="opt" data-service="중고 PC 검수" onclick="pickOpt(this)"><i class="ph ph-magnifying-glass"></i><strong>중고 검수</strong><span>구매 전 사양·상태 확인</span></button>
-            <button class="opt" data-service="내 PC 판매" onclick="pickOpt(this)"><i class="ph ph-currency-krw"></i><strong>PC 판매</strong><span>매장 입찰로 매입가 비교</span></button>
+            <button class="opt" type="button" onclick="location.href='/assembly.html'"><i class="ph ph-wrench"></i><strong>조립 대행</strong><span>옵션별 공임 계산 후 의뢰</span></button>
         </div>
     </section>
 
