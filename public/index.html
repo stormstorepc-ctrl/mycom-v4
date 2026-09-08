@@ -1029,12 +1029,48 @@ function go(id, nav) {
     if (id === 'home') loadHomeData();
     if (id === 'myquotes') loadMyQuotes();
     if (id === 'myreservations') loadMyReservations();
+
+    pushScreen(id);
 }
 /* 배너 전용 이동 버튼 */
 function goScreen(id) {
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
     window.scrollTo({ top: 0, behavior: "smooth" });
+    pushScreen(id);
+}
+
+/* ================= 뒤로 가기 ================= */
+// 하위 화면에서 뒤로 가기를 누르면 앱을 벗어나지 않고 홈으로 돌아옵니다.
+
+let historyLocked = false;
+
+function pushScreen(id) {
+    if (historyLocked) return;
+    const state = history.state;
+    if (state && state.screen === id) return;
+    try {
+        history.pushState({ screen: id }, '', '#' + id);
+    } catch (e) { /* 히스토리를 쓸 수 없는 환경은 무시합니다 */ }
+}
+
+window.addEventListener('popstate', event => {
+    const id = (event.state && event.state.screen) || 'home';
+    const target = document.getElementById(id) ? id : 'home';
+    historyLocked = true;
+    go(target, true);
+    historyLocked = false;
+    if (target === 'home') {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const homeTab = document.querySelector('.bottom-nav .nav-item');
+        if (homeTab) homeTab.classList.add('active');
+    }
+});
+
+function initHistory() {
+    try { history.replaceState({ screen: 'home' }, '', location.pathname + location.search); } catch (e) {}
+    const hash = (location.hash || '').replace('#', '');
+    if (hash && hash !== 'home' && document.getElementById(hash)) go(hash, true);
 }
 
 /* ================= HERO SLIDER ================= */
@@ -2483,6 +2519,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadHeroImages();
     loadExpertPhoto();
     loadHomeCopy();
+    initHistory();
 });
 
 </script>
