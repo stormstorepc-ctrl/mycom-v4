@@ -1198,7 +1198,10 @@ async function fetchShops() {
         if (myPos) {
             // 가까운 순으로 먼저 찾고, 주변에 없으면 범위를 넓혀 다시 찾습니다.
             for (const radius of [40, 200, 1000]) {
-                const d = await apiCall(`/shops?latitude=${myPos.lat}&longitude=${myPos.lng}&radius=${radius}&sort=distance`);
+                let d;
+                try {
+                    d = await apiCall(`/shops?latitude=${myPos.lat}&longitude=${myPos.lng}&radius=${radius}&sort=distance`);
+                } catch (err) { continue; }
                 shops = d.shops || [];
                 if (shops.length) {
                     if (radius > 40) note.innerHTML = '<i class="ph-fill ph-map-pin"></i> 주변에 매장이 없어 범위를 넓혔습니다';
@@ -1214,7 +1217,11 @@ async function fetchShops() {
         shopCache = shops;
         renderShops();
     } catch (e) {
-        list.innerHTML = '<p style="padding:22px 20px;color:var(--sub);font-size:13px">매장을 불러오지 못했습니다.</p>';
+        console.error('매장 조회 실패:', e);
+        list.innerHTML = `<div style="padding:26px 20px;color:var(--sub);font-size:13px;line-height:1.6">
+            매장을 불러오지 못했습니다.<br><span style="color:#C05621">${esc(e.message || '알 수 없는 오류')}</span>
+            <div style="margin-top:14px"><button class="secondary-btn" onclick="fetchShops()">다시 시도</button></div>
+        </div>`;
     }
 }
 
@@ -1230,10 +1237,10 @@ function sortedShops() {
 function renderShops() {
     const list = document.getElementById('shopsList');
     const shops = sortedShops();
-    renderMapPins(shops);
 
     if (!shops.length) {
         list.innerHTML = '<div style="padding:26px 20px;color:var(--sub);font-size:13px;line-height:1.6">조건에 맞는 인증 매장이 없습니다.<br>매장이 방금 등록되었다면 <b>관리자 승인</b> 후에 노출됩니다.</div>';
+        try { renderMapPins([]); } catch (e) {}
         return;
     }
 
@@ -1250,6 +1257,9 @@ function renderShops() {
             </div>
         </div>`;
     }).join('');
+
+    // 지도는 부가 요소입니다. 실패해도 목록은 그대로 둡니다.
+    try { renderMapPins(shops); } catch (e) { console.warn('지도 표시 실패:', e); }
 }
 
 function renderMapPins(shops) {
