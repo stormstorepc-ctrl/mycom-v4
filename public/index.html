@@ -5,1039 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>MYCOM | 내 PC의 모든 것</title>
 
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="app.css">
 <style>
-:root {
-    --primary: #12B886;
-    --primary-dark: #099268;
-    --primary-light: #E6FCF5;
-    --blue: #4C6EF5;
-    --orange: #FF922B;
-    --red: #FA5252;
-    --purple: #845EF7;
-
-    --bg: #F6F7F8;
-    --card: #FFFFFF;
-    --text: #191F28;
-    --sub: #6B7684;
-    --line: #E9ECEF;
-
-    --radius: 22px;
-    --shadow: 0 8px 30px rgba(0,0,0,.07);
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family:
-        Pretendard,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Apple SD Gothic Neo",
-        "Noto Sans KR",
-        sans-serif;
-    background: #ECEFF1;
-    color: var(--text);
-}
-
-button, input, select {
-    font: inherit;
-}
-
-button {
-    border: 0;
-    cursor: pointer;
-}
-
-.app {
-    width: 100%;
-    max-width: 520px;
-    min-height: 100vh;
-    margin: auto;
-    background: var(--bg);
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 100px;
-}
-
-/* ================= HEADER ================= */
-
-.top-header {
-    height: 72px;
-    padding: 14px 20px;
-    background: rgba(255,255,255,.95);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(15px);
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: -1px;
-}
-
-.logo-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 11px;
-    background: linear-gradient(135deg, var(--primary), #38D9A9);
-    color: white;
-    display: grid;
-    place-items: center;
-    font-size: 17px;
-    box-shadow: 0 6px 15px rgba(18,184,134,.25);
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.location {
-    background: var(--bg);
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
-    background: var(--bg);
-    font-size: 18px;
-}
-
-/* ================= SCREEN ================= */
-
-.screen {
-    display: none;
-    animation: fade .3s ease;
-}
-
-.screen.active {
-    display: block;
-}
-
-@keyframes fade {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.section {
-    padding: 0 18px;
-    margin-bottom: 28px;
-}
-
-.section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.section-title {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: -1px;
-}
-
-.more {
-    color: var(--sub);
-    font-size: 13px;
-}
-
-/* ================= HERO ================= */
-
-.hero-slider {
-    margin: 8px 18px 24px;
-    overflow: hidden;
-    border-radius: 28px;
-    box-shadow: var(--shadow);
-}
-
-.hero-track {
-    display: flex;
-    transition: transform .45s ease;
-}
-
-.hero {
-    min-width: 100%;
-    min-height: 245px;
-    padding: 28px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero.one {
-    background:
-        radial-gradient(circle at 90% 15%, rgba(255,255,255,.22), transparent 30%),
-        linear-gradient(135deg,#0CA678,#20C997);
-}
-
-.hero.two {
-    background:
-        radial-gradient(circle at 85% 20%, rgba(255,255,255,.2), transparent 28%),
-        linear-gradient(135deg,#4263EB,#748FFC);
-}
-
-.hero.three {
-    background:
-        radial-gradient(circle at 85% 20%, rgba(255,255,255,.2), transparent 28%),
-        linear-gradient(135deg,#F76707,#FFB347);
-}
-
-.hero-badge {
-    display: inline-flex;
-    padding: 7px 11px;
-    border-radius: 20px;
-    background: rgba(255,255,255,.18);
-    font-size: 11px;
-    font-weight: 800;
-    backdrop-filter: blur(5px);
-}
-
-.hero h1 {
-    margin: 18px 0 8px;
-    font-size: 29px;
-    line-height: 1.25;
-    letter-spacing: -1.8px;
-}
-
-.hero p {
-    margin: 0;
-    font-size: 14px;
-    opacity: .88;
-    line-height: 1.6;
-}
-
-.hero-btn {
-    margin-top: 22px;
-    padding: 13px 17px;
-    background: white;
-    color: var(--text);
-    border-radius: 15px;
-    font-weight: 900;
-}
-
-.hero-art {
-    position: absolute;
-    right: -15px;
-    bottom: -25px;
-    font-size: 115px;
-    transform: rotate(-12deg);
-    opacity: .9;
-}
-
-.slider-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: -13px;
-    position: relative;
-    z-index: 5;
-}
-
-.dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 10px;
-    background: rgba(255,255,255,.5);
-}
-
-.dot.active {
-    width: 22px;
-    background: white;
-}
-
-/* ================= SEARCH ================= */
-
-.search-box {
-    margin: 0 18px 24px;
-    height: 55px;
-    padding: 0 17px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: white;
-    border-radius: 18px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.05);
-    color: var(--sub);
-}
-
-.search-box input {
-    flex: 1;
-    border: 0;
-    outline: 0;
-    background: transparent;
-}
-
-/* ================= CATEGORY ================= */
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 13px 8px;
-}
-
-.category {
-    text-align: center;
-    cursor: pointer;
-}
-
-.category-icon {
-    width: 62px;
-    height: 62px;
-    margin: auto;
-    border-radius: 21px;
-    display: grid;
-    place-items: center;
-    font-size: 28px;
-    background: white;
-    box-shadow: 0 5px 15px rgba(0,0,0,.04);
-}
-
-.category:nth-child(1) .category-icon { background:#E7F5FF; }
-.category:nth-child(2) .category-icon { background:#FFF4E6; }
-.category:nth-child(3) .category-icon { background:#F3F0FF; }
-.category:nth-child(4) .category-icon { background:#E6FCF5; }
-.category:nth-child(5) .category-icon { background:#FFF0F6; }
-.category:nth-child(6) .category-icon { background:#EBFBEE; }
-.category:nth-child(7) .category-icon { background:#FFF9DB; }
-.category:nth-child(8) .category-icon { background:#F1F3F5; }
-
-.category span {
-    display: block;
-    margin-top: 7px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-/* ================= HORIZONTAL CARDS ================= */
-
-.horizontal-scroll {
-    display: flex;
-    gap: 13px;
-    overflow-x: auto;
-    padding: 2px 18px 10px;
-    scrollbar-width: none;
-}
-
-.horizontal-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-.service-card {
-    min-width: 230px;
-    background: white;
-    border-radius: 22px;
-    padding: 18px;
-    box-shadow: 0 5px 20px rgba(0,0,0,.05);
-}
-
-.service-card .card-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 15px;
-    display: grid;
-    place-items: center;
-    font-size: 22px;
-    background: var(--primary-light);
-}
-
-.service-card h3 {
-    margin: 15px 0 6px;
-    font-size: 16px;
-}
-
-.service-card p {
-    margin: 0;
-    font-size: 12px;
-    color: var(--sub);
-    line-height: 1.6;
-}
-
-/* ================= LIVE ================= */
-
-.live-card {
-    background: #191F28;
-    color: white;
-    border-radius: 26px;
-    padding: 22px;
-    margin: 0 18px;
-    position: relative;
-    overflow: hidden;
-}
-
-.live-card::after {
-    content: "";
-    width: 180px;
-    height: 180px;
-    position: absolute;
-    right: -70px;
-    top: -80px;
-    border-radius: 50%;
-    background: var(--primary);
-    opacity: .25;
-}
-
-.live-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.live-badge {
-    background: rgba(250,82,82,.2);
-    color: #FF8787;
-    padding: 7px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.live-price {
-    font-size: 28px;
-    font-weight: 900;
-    margin: 17px 0 4px;
-}
-
-.live-sub {
-    color: #ADB5BD;
-    font-size: 12px;
-}
-
-.live-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin-top: 18px;
-}
-
-/* ================= SHOP CARD ================= */
-
-.shop-card {
-    background: white;
-    border-radius: 23px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,.05);
-    margin-bottom: 15px;
-}
-
-.shop-image {
-    height: 145px;
-    background:
-        linear-gradient(135deg,rgba(0,0,0,.1),rgba(0,0,0,.02)),
-        linear-gradient(135deg,#343A40,#868E96);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 60px;
-}
-
-.shop-body {
-    padding: 17px;
-}
-
-.shop-name-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.shop-name {
-    font-weight: 900;
-    font-size: 17px;
-}
-
-.shop-rating {
-    margin-top: 8px;
-    color: var(--sub);
-    font-size: 12px;
-}
-
-.shop-tags {
-    display: flex;
-    gap: 6px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-}
-
-.tag {
-    background: #F1F3F5;
-    border-radius: 9px;
-    padding: 6px 8px;
-    font-size: 10px;
-    color: #495057;
-}
-
-.shop-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-/* ================= BUTTON ================= */
-
-.primary-btn {
-    width: 100%;
-    padding: 16px;
-    border-radius: 17px;
-    background: var(--primary);
-    color: white;
-    font-weight: 900;
-}
-
-.secondary-btn {
-    flex: 1;
-    padding: 13px;
-    border-radius: 14px;
-    background: #F1F3F5;
-    color: var(--text);
-    font-weight: 800;
-    font-size: 13px;
-}
-
-.small-primary {
-    flex: 1;
-    padding: 13px;
-    border-radius: 14px;
-    background: var(--primary);
-    color: white;
-    font-weight: 800;
-    font-size: 13px;
-}
-
-/* ================= FORM ================= */
-
-.page-header {
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: white;
-    font-weight: 900;
-    font-size: 18px;
-}
-
-.back-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 13px;
-    background: var(--bg);
-    font-size: 20px;
-}
-
-.page-content {
-    padding: 20px 18px;
-}
-
-.info-box {
-    background: white;
-    padding: 22px;
-    border-radius: 24px;
-    margin-bottom: 18px;
-}
-
-.info-box h2 {
-    margin: 0 0 8px;
-    font-size: 22px;
-}
-
-.info-box p {
-    color: var(--sub);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 13px;
-    font-weight: 800;
-}
-
-.input {
-    width: 100%;
-    height: 54px;
-    padding: 0 15px;
-    border: 1px solid var(--line);
-    border-radius: 15px;
-    outline: none;
-    background: #FAFAFA;
-}
-
-.input:focus {
-    border-color: var(--primary);
-    background: white;
-}
-
-/* ================= AI PRICE ================= */
-
-.price-result {
-    background:
-        linear-gradient(145deg,#0CA678,#20C997);
-    color: white;
-    padding: 27px;
-    border-radius: 28px;
-    position: relative;
-    overflow: hidden;
-}
-
-.price-result::after {
-    content: "AI";
-    position: absolute;
-    right: 15px;
-    bottom: -25px;
-    font-size: 110px;
-    font-weight: 900;
-    opacity: .12;
-}
-
-.price-label {
-    font-size: 13px;
-    opacity: .8;
-}
-
-.price-value {
-    font-size: 31px;
-    font-weight: 900;
-    margin-top: 8px;
-    letter-spacing: -1.5px;
-}
-
-.analysis-progress {
-    height: 8px;
-    background: rgba(255,255,255,.25);
-    border-radius: 10px;
-    margin-top: 20px;
-}
-
-.analysis-progress span {
-    display: block;
-    width: 92%;
-    height: 100%;
-    background: white;
-    border-radius: 10px;
-}
-
-/* ================= BID ================= */
-
-.timer {
-    color: var(--red);
-    font-weight: 900;
-}
-
-.bid-card {
-    background: white;
-    padding: 18px;
-    border-radius: 20px;
-    margin-bottom: 11px;
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.rank {
-    width: 40px;
-    height: 40px;
-    border-radius: 13px;
-    display: grid;
-    place-items: center;
-    background: #F8F9FA;
-    font-weight: 900;
-}
-
-.bid-info {
-    flex: 1;
-}
-
-.bid-info strong {
-    display: block;
-}
-
-.bid-info span {
-    font-size: 11px;
-    color: var(--sub);
-}
-
-.bid-price {
-    font-size: 17px;
-    font-weight: 900;
-}
-
-/* ================= BUILD ================= */
-
-.usage-grid {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 11px;
-}
-
-.usage-card {
-    background: white;
-    padding: 19px;
-    border-radius: 20px;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-
-.usage-card.active {
-    border-color: var(--primary);
-    background: var(--primary-light);
-}
-
-.usage-card .emoji {
-    font-size: 29px;
-}
-
-.usage-card strong {
-    display: block;
-    margin-top: 10px;
-}
-
-.usage-card span {
-    display: block;
-    margin-top: 5px;
-    font-size: 11px;
-    color: var(--sub);
-}
-
-.budget-box {
-    background: white;
-    border-radius: 22px;
-    padding: 20px;
-    margin-top: 17px;
-}
-
-.range-value {
-    font-size: 26px;
-    font-weight: 900;
-    color: var(--primary);
-}
-
-.range {
-    width: 100%;
-    accent-color: var(--primary);
-}
-
-/* ================= AI CHAT ================= */
-
-.chat-container {
-    height: calc(100vh - 180px);
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-messages {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.message {
-    max-width: 80%;
-    padding: 13px 15px;
-    border-radius: 18px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.ai-message {
-    background: white;
-    border-top-left-radius: 5px;
-}
-
-.user-message {
-    background: var(--primary);
-    color: white;
-    margin-left: auto;
-    border-top-right-radius: 5px;
-}
-
-.chat-input {
-    background: white;
-    padding: 13px 18px 22px;
-    display: flex;
-    gap: 8px;
-}
-
-.chat-input input {
-    flex: 1;
-    height: 50px;
-    border: 0;
-    background: var(--bg);
-    border-radius: 16px;
-    padding: 0 15px;
-    outline: none;
-}
-
-.send-btn {
-    width: 50px;
-    border-radius: 16px;
-    background: var(--primary);
-    color: white;
-}
-
-/* ================= MY PAGE ================= */
-
-.profile-card {
-    background: linear-gradient(135deg,#191F28,#343A40);
-    color: white;
-    margin: 18px;
-    padding: 23px;
-    border-radius: 28px;
-}
-
-.profile-top {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.avatar {
-    width: 53px;
-    height: 53px;
-    border-radius: 18px;
-    background: var(--primary);
-    display: grid;
-    place-items: center;
-    font-size: 24px;
-}
-
-.profile-top small {
-    color: #ADB5BD;
-}
-
-.profile-top strong {
-    display: block;
-    font-size: 18px;
-    margin-top: 2px;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    margin-top: 22px;
-    gap: 10px;
-}
-
-.stat {
-    background: rgba(255,255,255,.08);
-    padding: 14px;
-    border-radius: 16px;
-}
-
-.stat strong {
-    font-size: 19px;
-}
-
-.stat span {
-    display: block;
-    font-size: 10px;
-    color: #ADB5BD;
-    margin-top: 4px;
-}
-
-.menu-list {
-    background: white;
-    border-radius: 23px;
-    overflow: hidden;
-}
-
-.menu-item {
-    padding: 18px;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.menu-item:last-child {
-    border-bottom: 0;
-}
-
-.menu-item span:last-child {
-    margin-left: auto;
-    color: var(--sub);
-}
-
-/* ================= BOTTOM NAV ================= */
-
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 520px;
-    height: 78px;
-    background: rgba(255,255,255,.96);
-    backdrop-filter: blur(15px);
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 200;
-}
-
-.nav-item {
-    background: transparent;
-    color: #868E96;
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    min-width: 58px;
-}
-
-.nav-item .nav-icon {
-    font-size: 20px;
-}
-
-.nav-item.active {
-    color: var(--primary);
-    font-weight: 900;
-}
-
-.nav-center {
-    width: 56px;
-    height: 56px;
-    margin-top: -24px;
-    border-radius: 20px;
-    background: var(--primary);
-    color: white !important;
-    box-shadow: 0 8px 20px rgba(18,184,134,.35);
-}
-
-/* ================= TOAST ================= */
-
-.toast {
-    position: fixed;
-    left: 50%;
-    bottom: 100px;
-    transform: translateX(-50%) translateY(20px);
-    background: #191F28;
-    color: white;
-    padding: 13px 18px;
-    border-radius: 15px;
-    font-size: 12px;
-    opacity: 0;
-    transition: .3s;
-    pointer-events: none;
-    z-index: 500;
-    white-space: nowrap;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-/* ================= AUTH MODAL ================= */
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-overlay.show {
-    display: flex;
-}
-
-.modal-box {
-    width: 100%;
-    max-width: 380px;
-    margin: 0 20px;
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 26px 22px;
-    box-shadow: var(--shadow);
-}
-
-.modal-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
-    background: var(--bg);
-    border-radius: 12px;
-    padding: 4px;
-}
-
-.modal-tab {
-    flex: 1;
-    text-align: center;
-    padding: 9px 0;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--sub);
-    cursor: pointer;
-}
-
-.modal-tab.active {
-    background: var(--card);
-    color: var(--text);
-    box-shadow: var(--shadow);
-}
-
-.modal-box h2 {
-    margin: 0 0 16px;
-    font-size: 18px;
-}
-
-.modal-box .form-group {
-    margin-bottom: 12px;
-}
-
-.modal-error {
-    color: var(--red);
-    font-size: 12px;
-    margin: -4px 0 12px;
-    min-height: 14px;
-}
-
-.modal-close {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--sub);
-    cursor: pointer;
-}
-.search-box{display:none!important}
+.deals{margin:20px 18px 26px}
+.deals .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.deals-badge{font-size:11px;font-weight:700;letter-spacing:.02em;color:#1F6FE5;background:#EDF3FE;padding:5px 9px;border-radius:6px}
+.deals-slider{overflow:hidden;border-radius:12px;border:1px solid #E7E9EC;background:#fff}
+.deals-track{display:flex;transition:transform .45s cubic-bezier(.22,.61,.36,1)}
+.deals-item{min-width:100%;display:block;position:relative;aspect-ratio:2.6/1;overflow:hidden;background:#F2F4F6;text-decoration:none}
+.deals-item img{width:100%;height:100%;display:block;object-fit:cover}
+.deals-item::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,20,26,0) 38%,rgba(16,20,26,.62) 100%)}
+.deals-copy{position:absolute;left:18px;right:18px;bottom:16px;z-index:2;color:#fff}
+.deals-copy strong{display:block;font-size:20px;line-height:1.25;font-weight:700;letter-spacing:-.02em}
+.deals-copy span{display:block;margin-top:5px;font-size:13px;line-height:1.35;font-weight:500;opacity:.92}
+.deals-dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.deals-dots i{width:6px;height:6px;border-radius:999px;background:#D5D9DE;transition:.2s;display:block}
+.deals-dots i.on{width:18px;background:#1F6FE5}
 </style>
 </head>
 
@@ -1050,306 +35,145 @@ button {
 <div class="screen active" id="home">
 
 <header class="top-header">
-
     <div class="logo">
         <div class="logo-mark">M</div>
         MYCOM
     </div>
-
     <div class="header-right">
-        <div class="location">📍 내 주변</div>
-        <button class="icon-btn" id="headerAuthBtn" onclick="showLogin()">👤</button>
-        <button class="icon-btn">🔔</button>
+        <button class="location" onclick="showToast('위치 설정 기능은 준비 중입니다.')"><i class="ph-fill ph-map-pin"></i> 내 주변</button>
+        <button class="icon-btn" id="headerAuthBtn" onclick="showLogin()"><i class="ph ph-user-circle"></i></button>
+        <button class="icon-btn" onclick="location.href='/notifications.html'"><i class="ph ph-bell"></i></button>
     </div>
-
 </header>
 
+<section class="lead">
+    <h1 class="lead-title">어떤 도움이<br>필요하세요?</h1>
+    <p class="lead-sub">사업자·자격을 검증한 내 주변 인증 매장이 견적으로 답합니다.</p>
+    <div class="trust-strip">
+        <div class="trust-item"><i class="ph ph-identification-card"></i><span>사업자 실명</span></div>
+        <div class="trust-item"><i class="ph ph-certificate"></i><span>기술 자격</span></div>
+        <div class="trust-item"><i class="ph ph-shield-check"></i><span>가격 보증</span></div>
+    </div>
+</section>
 
 <div class="hero-slider">
-
 <div class="hero-track" id="heroTrack">
 
 <section class="hero one">
-
-<div class="hero-badge">🔥 AI 실시간 가격 분석</div>
-
-<h1>
-내 컴퓨터,<br>
-얼마에 팔 수 있을까?
-</h1>
-
-<p>
-PC 사양과 중고 시세를 분석하고<br>
-인증 매장의 실시간 입찰을 받아보세요.
-</p>
-
-<button class="hero-btn" onclick="location.href='/sell.html'">
-내 PC 가격 알아보기 →
-</button>
-
+    <div class="hero-badge"><i class="ph-fill ph-currency-krw"></i> AI 실시간 가격 분석</div>
+    <h1>내 컴퓨터,<br>얼마에 팔 수 있을까?</h1>
+    <p>PC 사양과 중고 시세를 분석하고 인증 매장의 실시간 입찰을 받아보세요.</p>
+    <button class="hero-btn" onclick="location.href='/sell.html'">내 PC 가격 알아보기 <i class="ph ph-arrow-right"></i></button>
+    <i class="ph-fill ph-desktop-tower hero-art"></i>
 </section>
-
 
 <section class="hero two">
-
-<div class="hero-badge">⚡ AI 맞춤 견적</div>
-
-<h1>
-예산만 입력하면<br>
-딱 맞는 PC 추천
-</h1>
-
-<p>
-게임 · 영상편집 · 업무 · AI 개발까지<br>
-나에게 맞는 최적의 구성을 찾아드립니다.
-</p>
-
-<button class="hero-btn" onclick="document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('build').classList.add('active');window.scrollTo(0,0)">
-PC 견적 만들기 →
-</button>
-
+    <div class="hero-badge"><i class="ph-fill ph-sparkle"></i> AI 맞춤 견적</div>
+    <h1>예산만 입력하면<br>딱 맞는 PC 추천</h1>
+    <p>게임 · 영상편집 · 업무 · AI 개발까지 나에게 맞는 최적의 구성을 찾아드립니다.</p>
+    <button class="hero-btn" onclick="goScreen('build')">PC 견적 만들기 <i class="ph ph-arrow-right"></i></button>
+    <i class="ph-fill ph-cpu hero-art"></i>
 </section>
-
 
 <section class="hero three">
-
-<div class="hero-badge">📍 내 주변 PC 전문가</div>
-
-<h1>
-가까운 전문가에게<br>
-PC를 맡겨보세요
-</h1>
-
-<p>
-조립 · 수리 · 업그레이드 · 중고 검수<br>
-후기와 가격을 비교해보세요.
-</p>
-
-<button class="hero-btn" onclick="go('shops')">
-주변 매장 찾기 →
-</button>
-
+    <div class="hero-badge"><i class="ph-fill ph-map-pin"></i> 내 주변 PC 전문가</div>
+    <h1>가까운 전문가에게<br>PC를 맡겨보세요</h1>
+    <p>조립 · 수리 · 업그레이드 · 중고 검수. 후기와 가격을 비교해보세요.</p>
+    <button class="hero-btn" onclick="go('shops')">주변 매장 찾기 <i class="ph ph-arrow-right"></i></button>
+    <i class="ph-fill ph-wrench hero-art"></i>
 </section>
 
 </div>
-
 </div>
-
 
 <div class="slider-dots">
-<div class="dot active"></div>
-<div class="dot"></div>
-<div class="dot"></div>
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
 </div>
 
+<section class="deals" id="specialDeals" hidden>
+    <div class="section-head">
+        <div class="section-title">오늘의 특가</div>
+        <div class="deals-badge">한정 수량</div>
+    </div>
+    <div class="deals-slider"><div class="deals-track" id="dealsTrack"></div></div>
+    <div class="deals-dots" id="dealsDots"></div>
+</section>
 
 <div class="search-box">
-
-<span>🔍</span>
-
-<input
-type="text"
-placeholder="PC 조립 대행, 수리, 중고판매를 검색하세요"
->
-
+    <span><i class="ph ph-magnifying-glass"></i></span>
+    <input type="text" placeholder="PC 조립 대행, 수리, 중고판매를 검색하세요">
 </div>
-
 
 <section class="section">
-
-<div class="section-head">
-<div class="section-title">무엇을 도와드릴까요?</div>
-</div>
-
-<div class="category-grid">
-
-<div class="category" onclick="go('build')">
-<div class="category-icon">🖥️</div>
-<span>PC 조립</span>
-</div>
-
-<div class="category" onclick="go('sell')">
-<div class="category-icon">💰</div>
-<span>PC 판매</span>
-</div>
-
-<div class="category" onclick="go('inspection')">
-<div class="category-icon">🔍</div>
-<span>중고 검수</span>
-</div>
-
-<div class="category" onclick="go('shops')">
-<div class="category-icon">📍</div>
-<span>매장 찾기</span>
-</div>
-
-<div class="category" onclick="go('build')">
-<div class="category-icon">🎮</div>
-<span>게임 PC</span>
-</div>
-
-<div class="category" onclick="go('chat')">
-<div class="category-icon">🤖</div>
-<span>AI 상담</span>
-</div>
-
-<div class="category" onclick="window.location.href='/ai.html?type=visit'">
-<div class="category-icon">🚗</div>
-<span>출장 서비스</span>
-</div>
-
-<div class="category" onclick="go('bid')">
-<div class="category-icon">🔥</div>
-<span>인기 견적</span>
-</div>
-
-</div>
-
+    <div class="section-head">
+        <div class="section-title">의뢰 항목</div>
+    </div>
+    <div class="category-grid">
+        <div class="category" onclick="go('build')"><div class="category-icon"><i class="ph ph-desktop-tower"></i></div><span>PC 조립</span></div>
+        <div class="category" onclick="go('sell')"><div class="category-icon"><i class="ph ph-currency-krw"></i></div><span>PC 판매</span></div>
+        <div class="category" onclick="go('inspection')"><div class="category-icon"><i class="ph ph-magnifying-glass"></i></div><span>중고 검수</span></div>
+        <div class="category" onclick="go('shops')"><div class="category-icon"><i class="ph ph-storefront"></i></div><span>매장 찾기</span></div>
+        <div class="category" onclick="go('build')"><div class="category-icon"><i class="ph ph-game-controller"></i></div><span>게임 PC</span></div>
+        <div class="category" onclick="go('chat')"><div class="category-icon"><i class="ph ph-chat-teardrop-dots"></i></div><span>AI 상담</span></div>
+        <div class="category" onclick="window.location.href='/ai.html?type=visit'"><div class="category-icon"><i class="ph ph-truck"></i></div><span>출장 서비스</span></div>
+        <div class="category" onclick="go('bid')"><div class="category-icon"><i class="ph ph-gavel"></i></div><span>인기 견적</span></div>
+    </div>
 </section>
-
 
 <section>
-
-<div class="section-head" style="padding:0 18px">
-
-<div class="section-title">
-🔥 지금 인기 있는 서비스
-</div>
-
-<div class="more">전체보기 ›</div>
-
-</div>
-
-
-<div class="horizontal-scroll">
-
-<div class="service-card" onclick="go('build')">
-
-<div class="card-icon">🎮</div>
-
-<h3>게이밍 PC 견적</h3>
-
-<p>
-예산과 원하는 게임만 선택하면<br>
-AI가 최적의 PC를 추천합니다.
-</p>
-
-</div>
-
-
-<div class="service-card" onclick="go('sell')">
-
-<div class="card-icon">💸</div>
-
-<h3>내 PC 가격 확인</h3>
-
-<p>
-현재 중고 시세와 실제 매장<br>
-입찰 가격을 비교하세요.
-</p>
-
-</div>
-
-
-<div class="service-card" onclick="go('inspection')">
-
-<div class="card-icon">🛡️</div>
-
-<h3>중고 PC 정밀 검수</h3>
-
-<p>
-구매 전 전문가가 사양과 상태를<br>
-정밀하게 확인합니다.
-</p>
-
-</div>
-
-</div>
-
+    <div class="section-head" style="padding:0 20px">
+        <div class="section-title">지금 인기 있는 서비스</div>
+        <div class="more">전체보기</div>
+    </div>
+    <div class="horizontal-scroll">
+        <div class="service-card" onclick="go('build')">
+            <div class="card-icon"><i class="ph ph-game-controller"></i></div>
+            <h3>게이밍 PC 견적</h3>
+            <p>예산과 원하는 게임만 선택하면 AI가 최적의 PC를 추천합니다.</p>
+        </div>
+        <div class="service-card" onclick="go('sell')">
+            <div class="card-icon"><i class="ph ph-currency-krw"></i></div>
+            <h3>내 PC 가격 확인</h3>
+            <p>현재 중고 시세와 실제 매장 입찰 가격을 비교하세요.</p>
+        </div>
+        <div class="service-card" onclick="go('inspection')">
+            <div class="card-icon"><i class="ph ph-shield-check"></i></div>
+            <h3>중고 PC 정밀 검수</h3>
+            <p>구매 전 전문가가 사양과 상태를 정밀하게 확인합니다.</p>
+        </div>
+    </div>
 </section>
-
-
-<div style="height:10px"></div>
-
 
 <section>
-
-<div class="section-head" style="padding:0 18px">
-
-<div class="section-title">
-🔥 실시간 인기 입찰
-</div>
-
-<div class="more" onclick="go('bid')">전체보기 ›</div>
-
-</div>
-
-
-<div class="live-card" onclick="go('bid')">
-
-<div class="live-top">
-
-<div class="live-badge">
-🔴 LIVE · 입찰 진행 중
-</div>
-
-<div style="font-size:12px;color:#ADB5BD">
-남은 시간 02:43:30
-</div>
-
-</div>
-
-
-<div class="live-price" id="homeLivePrice">
-₩920,000
-</div>
-
-<div class="live-sub" id="homeLiveSpec">
-Ryzen 7 5800X · RTX 4070
-</div>
-
-
-<div class="live-bottom">
-
-<div>
-<div style="font-size:11px;color:#ADB5BD">
-현재 입찰
-</div>
-
-<strong style="font-size:19px" id="homeLiveBidCount">
-7개 인증 매장
-</strong>
-</div>
-
-<div style="font-size:24px">
-→
-</div>
-
-</div>
-
-</div>
-
+    <div class="section-head" style="padding:0 20px">
+        <div class="section-title">실시간 인기 입찰</div>
+        <div class="more" onclick="go('bid')">전체보기</div>
+    </div>
+    <div class="live-card" onclick="go('bid')">
+        <div class="live-top">
+            <div class="live-badge"><span class="live-dot"></span>LIVE · 입찰 진행 중</div>
+            <div class="live-time">남은 시간 02:43:30</div>
+        </div>
+        <div class="live-price" id="homeLivePrice">₩920,000</div>
+        <div class="live-sub" id="homeLiveSpec">Ryzen 7 5800X · RTX 4070</div>
+        <div class="live-bottom">
+            <div>
+                <div class="live-caption">현재 입찰</div>
+                <strong id="homeLiveBidCount">7개 인증 매장</strong>
+            </div>
+            <i class="ph ph-arrow-right live-go"></i>
+        </div>
+    </div>
 </section>
-
 
 <section class="section" style="margin-top:30px">
-
-<div class="section-head">
-
-<div class="section-title">
-📍 내 주변 인기 매장
-</div>
-
-<div class="more" onclick="go('shops')">
-전체보기 ›
-</div>
-
-</div>
-
-<div id="homeShopList">
-<!-- 매장 목록이 여기에 동적으로 표시됩니다 -->
-</div>
-
+    <div class="section-head">
+        <div class="section-title">내 주변 인기 매장</div>
+        <div class="more" onclick="go('shops')">전체보기</div>
+    </div>
+    <div id="homeShopList"></div>
 </section>
 
 </div>
@@ -1360,83 +184,46 @@ Ryzen 7 5800X · RTX 4070
 <div class="screen" id="sell">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-내 PC 판매하기
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    내 PC 판매하기
 </div>
-
 
 <div class="page-content">
 
-<div class="info-box">
+    <div class="page-lead">
+        <h2>내 PC 사양을<br>알려주세요</h2>
+        <p>정확한 사양을 입력할수록 AI 예상 가격과 매장 입찰 가격이 더욱 정확해집니다.</p>
+    </div>
 
-<div style="font-size:40px">🖥️</div>
+    <button class="row-action" onclick="showToast('PC 전용 사양 체크 프로그램으로 연결됩니다.')">
+        <i class="ph ph-lightning row-icon"></i>
+        <span class="row-body"><strong>사양 자동 인식</strong><small>PC에서 MYCOM 체커 실행</small></span>
+        <i class="ph ph-caret-right row-caret"></i>
+    </button>
 
-<h2>내 PC 정보를 알려주세요</h2>
+    <div class="form-group">
+        <label>CPU</label>
+        <input class="input" id="cpu" placeholder="예: Ryzen 7 5800X">
+    </div>
 
-<p>
-정확한 사양을 입력할수록 AI 예상 가격과
-매장 입찰 가격이 더욱 정확해집니다.
-</p>
+    <div class="form-group">
+        <label>그래픽카드</label>
+        <input class="input" id="gpu" placeholder="예: RTX 4070">
+    </div>
 
-</div>
+    <div class="form-group">
+        <label>RAM</label>
+        <input class="input" id="ram" placeholder="예: 32GB DDR4">
+    </div>
 
+    <div class="form-group">
+        <label>SSD</label>
+        <input class="input" id="storage" placeholder="예: NVMe 1TB">
+    </div>
 
-<div class="form-group">
-
-<label>CPU</label>
-
-<input class="input" id="cpu" placeholder="예: Ryzen 7 5800X">
-
-</div>
-
-
-<div class="form-group">
-
-<label>그래픽카드</label>
-
-<input class="input" id="gpu" placeholder="예: RTX 4070">
-
-</div>
-
-
-<div class="form-group">
-
-<label>RAM</label>
-
-<input class="input" id="ram" placeholder="예: 32GB DDR4">
+    <button class="primary-btn" onclick="analyzePC()"><i class="ph-fill ph-sparkle"></i> AI 예상 가격 분석하기</button>
 
 </div>
-
-
-<div class="form-group">
-
-<label>SSD</label>
-
-<input class="input" id="storage" placeholder="예: NVMe 1TB">
-
-</div>
-
-
-<button class="primary-btn" onclick="analyzePC()">
-✨ AI 예상 가격 분석하기
-</button>
-
-
-<button
-class="secondary-btn"
-style="width:100%;margin-top:10px"
-onclick="showToast('PC 전용 사양 체크 프로그램으로 연결됩니다.')"
->
-
-🖥️ 컴퓨터 사양 자동 체크
-
-</button>
-
-</div>
-
 </div>
 
 
@@ -1445,70 +232,29 @@ onclick="showToast('PC 전용 사양 체크 프로그램으로 연결됩니다.'
 <div class="screen" id="price">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('sell')">‹</button>
-
-AI 예상 가격
-
+    <button class="back-btn" onclick="go('sell')"><i class="ph ph-arrow-left"></i></button>
+    AI 예상 가격
 </div>
-
 
 <div class="page-content">
 
-<div class="price-result">
+    <div class="price-result">
+        <div class="price-label"><i class="ph-fill ph-sparkle"></i> AI 분석 완료 · 신뢰도 <span id="aiConfidence">92%</span></div>
+        <div class="price-caption">예상 판매가</div>
+        <div class="price-value" id="aiPriceRange">₩820,000 ~ ₩950,000</div>
+        <div class="price-spec">내 PC · <strong id="pcSpec">Ryzen 7 5800X · RTX 4070</strong></div>
+        <div class="analysis-progress"><span></span></div>
+        <div class="price-scale"><span>최저 68만</span><span>평균 88만</span><span>최고 106만</span></div>
+    </div>
 
-<div class="price-label">
-✨ AI 분석 완료 · 신뢰도 <span id="aiConfidence">92%</span>
-</div>
+    <div class="note-row">
+        <i class="ph ph-shield-check"></i>
+        <p>입찰은 <strong>인증 매장만</strong> 참여합니다. 낙찰 후 가격 변경은 불가합니다.</p>
+    </div>
 
-<div style="margin-top:18px;font-size:13px">
-내 PC
-</div>
-
-<strong id="pcSpec">
-Ryzen 7 5800X · RTX 4070
-</strong>
-
-<div class="analysis-progress">
-<span></span>
-</div>
+    <button class="primary-btn" onclick="submitSellQuote()">인증 매장 입찰 받기</button>
 
 </div>
-
-
-<div class="info-box" style="margin-top:18px">
-
-<div style="font-size:13px;color:var(--sub)">
-예상 판매가격
-</div>
-
-<div style="
-font-size:30px;
-font-weight:900;
-color:var(--primary);
-margin-top:7px
-" id="aiPriceRange">
-
-₩820,000 ~ ₩950,000
-
-</div>
-
-<p>
-현재 중고 시장 평균과 최근 거래 가격을
-AI가 분석한 결과입니다.
-</p>
-
-</div>
-
-
-<button class="primary-btn" onclick="submitSellQuote()">
-
-🔥 인증 매장 입찰 받기
-
-</button>
-
-</div>
-
 </div>
 
 
@@ -1517,63 +263,26 @@ AI가 분석한 결과입니다.
 <div class="screen" id="bid">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-실시간 입찰
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    실시간 입찰
+    <span class="header-live"><span class="live-dot"></span>LIVE</span>
 </div>
-
 
 <div class="page-content" id="bidContent">
 
-<div class="info-box">
+    <div class="bid-summary">
+        <div class="live-caption">현재 최고 입찰가</div>
+        <div class="bid-highest" id="bidHighestPrice">₩920,000</div>
+        <div class="timer"><i class="ph-fill ph-timer"></i> 02:43:30 남음</div>
+    </div>
 
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center
-">
+    <div class="list-head">입찰 현황 <span>인증 매장만 참여</span></div>
 
-<div>
+    <div id="bidList"></div>
 
-<div style="font-size:12px;color:var(--sub)">
-현재 최고 입찰가
-</div>
-
-<div style="
-font-size:30px;
-font-weight:900;
-margin-top:4px
-" id="bidHighestPrice">
-
-₩920,000
+    <button class="primary-btn" style="margin-top:10px" onclick="showToast('최고가 변경 알림 기능은 준비 중입니다.')"><i class="ph ph-bell-ringing"></i> 최고가 변경 알림 받기</button>
 
 </div>
-
-</div>
-
-<div class="timer">
-⏱ 02:43:30
-</div>
-
-</div>
-
-</div>
-
-<div id="bidList">
-<!-- 입찰 목록이 여기에 동적으로 표시됩니다 -->
-</div>
-
-
-<button class="primary-btn" style="margin-top:10px">
-
-🔔 최고가 변경 알림 받기
-
-</button>
-
-</div>
-
 </div>
 
 
@@ -1582,111 +291,49 @@ margin-top:4px
 <div class="screen" id="build">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-AI PC 조립 견적
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    AI PC 조립 견적
 </div>
-
 
 <div class="page-content">
 
-<div class="info-box">
+    <div class="page-lead">
+        <h2>어떤 PC가<br>필요하세요?</h2>
+        <p>용도와 예산을 선택하면 MYCOM AI가 최적의 PC 구성을 추천합니다.</p>
+    </div>
 
-<h2>어떤 PC가 필요하세요?</h2>
+    <div class="usage-grid">
+        <div class="usage-card active" onclick="selectUsage(this)">
+            <i class="ph ph-game-controller"></i>
+            <strong>게임용</strong>
+            <span>최신 게임을 쾌적하게</span>
+        </div>
+        <div class="usage-card" onclick="selectUsage(this)">
+            <i class="ph ph-film-slate"></i>
+            <strong>영상 편집</strong>
+            <span>프리미어 · 방송</span>
+        </div>
+        <div class="usage-card" onclick="selectUsage(this)">
+            <i class="ph ph-briefcase"></i>
+            <strong>사무용</strong>
+            <span>문서 · 인터넷 · 업무</span>
+        </div>
+        <div class="usage-card" onclick="selectUsage(this)">
+            <i class="ph ph-cpu"></i>
+            <strong>AI / 개발</strong>
+            <span>개발 · 머신러닝</span>
+        </div>
+    </div>
 
-<p>
-용도와 예산을 선택하면 MYCOM AI가
-최적의 PC 구성을 추천합니다.
-</p>
+    <div class="budget-box">
+        <div class="live-caption">내 예산</div>
+        <div class="range-value">₩ <span id="budgetValue">1,500,000</span></div>
+        <input class="range" type="range" min="500000" max="5000000" step="100000" value="1500000" oninput="updateBudget(this.value)">
+    </div>
 
-</div>
-
-
-<div class="usage-grid">
-
-<div class="usage-card active" onclick="selectUsage(this)">
-
-<div class="emoji">🎮</div>
-
-<strong>게임용</strong>
-
-<span>최신 게임을 쾌적하게</span>
-
-</div>
-
-
-<div class="usage-card" onclick="selectUsage(this)">
-
-<div class="emoji">🎬</div>
-
-<strong>영상 편집</strong>
-
-<span>프리미어 · 방송</span>
-
-</div>
-
-
-<div class="usage-card" onclick="selectUsage(this)">
-
-<div class="emoji">💼</div>
-
-<strong>사무용</strong>
-
-<span>문서 · 인터넷 · 업무</span>
+    <button class="primary-btn" style="margin-top:18px" onclick="showRecommendation()"><i class="ph-fill ph-sparkle"></i> AI 추천 PC 보기</button>
 
 </div>
-
-
-<div class="usage-card" onclick="selectUsage(this)">
-
-<div class="emoji">🤖</div>
-
-<strong>AI / 개발</strong>
-
-<span>개발 · 머신러닝</span>
-
-</div>
-
-</div>
-
-
-<div class="budget-box">
-
-<div style="font-size:13px;color:var(--sub)">
-내 예산
-</div>
-
-<div class="range-value">
-₩ <span id="budgetValue">1,500,000</span>
-</div>
-
-<input
-class="range"
-type="range"
-min="500000"
-max="5000000"
-step="100000"
-value="1500000"
-oninput="updateBudget(this.value)"
->
-
-</div>
-
-
-<button
-class="primary-btn"
-style="margin-top:18px"
-onclick="showRecommendation()"
->
-
-✨ AI 추천 PC 보기
-
-</button>
-
-</div>
-
 </div>
 
 
@@ -1695,79 +342,32 @@ onclick="showRecommendation()"
 <div class="screen" id="recommend">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('build')">‹</button>
-
-MYCOM 추천 PC
-
+    <button class="back-btn" onclick="go('build')"><i class="ph ph-arrow-left"></i></button>
+    MYCOM 추천 PC
 </div>
-
 
 <div class="page-content">
 
-<div class="price-result">
+    <div class="page-lead">
+        <div class="kicker"><i class="ph-fill ph-sparkle"></i> AI 추천 구성</div>
+        <h2>게임과 작업을 모두<br>만족하는 균형 구성</h2>
+    </div>
 
-<div class="price-label">
-🤖 AI 추천 구성
-</div>
+    <div class="spec-list">
+        <div class="spec-row"><strong>CPU</strong><span>Ryzen 7 7800X3D</span></div>
+        <div class="spec-row"><strong>GPU</strong><span>RTX 5070 Ti</span></div>
+        <div class="spec-row"><strong>RAM</strong><span>DDR5 32GB</span></div>
+        <div class="spec-row"><strong>SSD</strong><span>NVMe 1TB</span></div>
+    </div>
 
-<h2 style="margin:13px 0 0">
-게임과 작업을 모두 만족하는 균형 구성
-</h2>
+    <div class="total-row">
+        <span>예상 견적</span>
+        <strong>₩1,489,000</strong>
+    </div>
 
-</div>
-
-
-<div class="info-box">
-
-<div class="spec-row">
-<strong>CPU</strong>
-<span>Ryzen 7 7800X3D</span>
-</div>
-
-<div class="spec-row">
-<strong>GPU</strong>
-<span>RTX 5070 Ti</span>
-</div>
-
-<div class="spec-row">
-<strong>RAM</strong>
-<span>DDR5 32GB</span>
-</div>
-
-<div class="spec-row">
-<strong>SSD</strong>
-<span>NVMe 1TB</span>
-</div>
-
-<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-
-<div style="font-size:13px;color:var(--sub)">
-예상 견적
-</div>
-
-<div style="
-font-size:29px;
-font-weight:900;
-color:var(--primary);
-margin-top:5px
-">
-
-₩1,489,000
+    <button class="primary-btn" onclick="requestQuote()">여러 매장에 견적 요청하기</button>
 
 </div>
-
-</div>
-
-
-<button class="primary-btn" onclick="requestQuote()">
-
-여러 매장에 견적 요청하기
-
-</button>
-
-</div>
-
 </div>
 
 
@@ -1776,93 +376,55 @@ margin-top:5px
 <div class="screen" id="inspection">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-중고 컴퓨터 검수
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    중고 컴퓨터 검수
 </div>
-
 
 <div class="page-content">
 
-<div class="info-box">
+    <div class="page-lead">
+        <i class="ph-fill ph-shield-check lead-icon"></i>
+        <h2>구매 전에<br>전문가가 확인합니다</h2>
+        <p>판매자가 말한 사양이 실제와 같은지, 부품 상태와 이상 여부를 검수 리포트로 받습니다.</p>
+    </div>
 
-<div style="font-size:38px">🛡️</div>
+    <div class="form-group">
+        <label>CPU</label>
+        <input class="input" placeholder="예: Ryzen 5 7500F">
+    </div>
 
-<h2>안전한 중고 거래</h2>
+    <div class="form-group">
+        <label>GPU</label>
+        <input class="input" placeholder="예: RTX 3070">
+    </div>
 
-<p>
-구매 전 전문가가 실제 사양,
-부품 상태와 이상 여부를 확인합니다.
-</p>
+    <div class="form-group">
+        <label>RAM / SSD</label>
+        <input class="input" placeholder="예: 32GB / 1TB">
+    </div>
 
-</div>
+    <div class="plan-card selected">
+        <div class="plan-top">
+            <strong>정밀 프리미엄 검수</strong>
+            <span class="plan-price">₩49,000</span>
+        </div>
+        <div class="plan-tags">
+            <span class="tag">사양 진위</span>
+            <span class="tag">온도 · 발열</span>
+            <span class="tag">성능 벤치</span>
+            <span class="tag">SSD 수명</span>
+            <span class="tag">외관 · 사진</span>
+        </div>
+    </div>
 
+    <button class="primary-btn" onclick="findInspectionShops()">검수 예약하기</button>
 
-<div class="form-group">
-
-<label>CPU</label>
-
-<input class="input" placeholder="예: Ryzen 5 7500F">
-
-</div>
-
-
-<div class="form-group">
-
-<label>GPU</label>
-
-<input class="input" placeholder="예: RTX 3070">
-
-</div>
-
-
-<div class="form-group">
-
-<label>RAM / SSD</label>
-
-<input class="input" placeholder="예: 32GB / 1TB">
-
-</div>
-
-
-<div class="info-box">
-
-<div style="font-weight:900">
-⭐ 정밀 프리미엄 검수
-</div>
-
-<p>
-외관 · 부품 · 온도 · 성능 · 안정성 테스트
-</p>
-
-<div style="
-font-size:23px;
-font-weight:900;
-color:var(--primary)
-">
-
-₩49,000
+    <div id="inspectionShopsWrap" style="display:none;margin-top:16px">
+        <div class="list-head">내 주변 검수 가능 업체</div>
+        <div id="inspectionShopsList"></div>
+    </div>
 
 </div>
-
-</div>
-
-
-<button class="primary-btn" onclick="findInspectionShops()">
-
-검수 예약하기
-
-</button>
-
-<div id="inspectionShopsWrap" style="display:none;margin-top:16px">
-<div style="font-weight:900;margin-bottom:10px">📍 내 주변 검수 가능 업체</div>
-<div id="inspectionShopsList"></div>
-</div>
-
-</div>
-
 </div>
 
 
@@ -1871,33 +433,17 @@ color:var(--primary)
 <div class="screen" id="shops">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-내 주변 PC 전문가
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    내 주변 PC 전문가
+    <button class="header-icon" onclick="showToast('필터 기능은 준비 중입니다.')"><i class="ph ph-sliders-horizontal"></i></button>
 </div>
-
 
 <div class="page-content" id="shopsContent">
-
-<div class="info-box">
-
-<strong>
-📍 현재 위치 기준 가까운 순
-</strong>
-
-<p>
-인증된 MYCOM 파트너 매장을
-거리와 평점 순으로 확인하세요.
-</p>
-
+    <div class="info-box">
+        <strong><i class="ph-fill ph-map-pin"></i> 현재 위치 기준 가까운 순</strong>
+        <p>인증된 MYCOM 파트너 매장을 거리와 평점 순으로 확인하세요.</p>
+    </div>
 </div>
-
-<!-- 매장 목록이 여기에 동적으로 표시됩니다 -->
-
-</div>
-
 </div>
 
 
@@ -1906,48 +452,22 @@ color:var(--primary)
 <div class="screen" id="chat">
 
 <div class="page-header">
-
-<button class="back-btn" onclick="go('home')">‹</button>
-
-🤖 MYCOM AI 상담원
-
+    <button class="back-btn" onclick="go('home')"><i class="ph ph-arrow-left"></i></button>
+    MYCOM AI 상담원
 </div>
-
 
 <div class="chat-container">
-
-<div class="chat-messages" id="chatMessages">
-
-<div class="message ai-message">
-
-안녕하세요! 👋<br>
-MYCOM AI 상담원입니다.<br><br>
-
-PC 구매, 조립, 중고 판매,
-수리 및 업그레이드에 대해
-무엇이든 물어보세요.
-
+    <div class="chat-messages" id="chatMessages">
+        <div class="message ai-message">
+            안녕하세요, MYCOM AI 상담원입니다.<br><br>
+            PC 구매, 조립, 중고 판매, 수리 및 업그레이드에 대해 무엇이든 물어보세요.
+        </div>
+    </div>
+    <div class="chat-input">
+        <input id="chatInput" placeholder="메시지를 입력하세요" onkeypress="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()"><i class="ph-fill ph-paper-plane-right"></i></button>
+    </div>
 </div>
-
-</div>
-
-
-<div class="chat-input">
-
-<input
-id="chatInput"
-placeholder="메시지를 입력하세요"
-onkeypress="if(event.key==='Enter')sendMessage()"
->
-
-<button class="send-btn" onclick="sendMessage()">
-➤
-</button>
-
-</div>
-
-</div>
-
 </div>
 
 
@@ -1956,164 +476,58 @@ onkeypress="if(event.key==='Enter')sendMessage()"
 <div class="screen" id="mypage">
 
 <header class="top-header">
-
-<div class="logo">
-MY
-</div>
-
-<button class="icon-btn" onclick="showToast('설정 기능은 아직 준비 중입니다.')">
-⚙️
-</button>
-
+    <div class="logo">MY</div>
+    <button class="icon-btn" onclick="showToast('설정 기능은 아직 준비 중입니다.')"><i class="ph ph-gear-six"></i></button>
 </header>
 
-
 <div class="profile-card">
-
-<div class="profile-top">
-
-<div class="avatar">
-👤
+    <div class="profile-top">
+        <div class="avatar"><i class="ph ph-user"></i></div>
+        <div>
+            <small>MYCOM MEMBER</small>
+            <strong id="profileName">로그인이 필요합니다</strong>
+        </div>
+        <i class="ph ph-caret-right row-caret"></i>
+    </div>
+    <div class="stats">
+        <div class="stat">
+            <strong id="statPoints">0P</strong>
+            <span>보유 포인트</span>
+        </div>
+        <div class="stat">
+            <strong id="statTrades">0건</strong>
+            <span>누적 거래</span>
+        </div>
+    </div>
 </div>
-
-<div>
-
-<small>MYCOM MEMBER</small>
-
-<strong id="profileName">로그인이 필요합니다</strong>
-
-</div>
-
-</div>
-
-
-<div class="stats">
-
-<div class="stat">
-
-<strong id="statPoints">0P</strong>
-
-<span>보유 포인트</span>
-
-</div>
-
-<div class="stat">
-
-<strong id="statTrades">0건</strong>
-
-<span>누적 거래</span>
-
-</div>
-
-</div>
-
-</div>
-
 
 <section class="section">
-
-<div class="section-title" style="margin-bottom:15px">
-내 활동
-</div>
-
-
-<div class="menu-list">
-
-<div class="menu-item" onclick="go('bid')">
-
-<span>🔥</span>
-
-<span>진행 중인 입찰</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="go('myquotes')">
-
-<span>📋</span>
-
-<span>내 견적</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="go('myreservations')">
-
-<span>📅</span>
-
-<span>예약 내역</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="showToast('찜한 매장 기능은 아직 준비 중입니다.')">
-
-<span>♡</span>
-
-<span>찜한 매장</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="go('chat')">
-
-<span>💬</span>
-
-<span>상담 내역</span>
-
-<span>›</span>
-
-</div>
-
-</div>
-
+    <div class="list-head">내 활동</div>
+    <div class="menu-list">
+        <div class="menu-item" onclick="go('bid')"><i class="ph ph-gavel"></i><span>진행 중인 입찰</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="go('myquotes')"><i class="ph ph-note-pencil"></i><span>내 견적</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="go('myreservations')"><i class="ph ph-calendar-check"></i><span>예약 내역</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="location.href='/favorites.html'"><i class="ph ph-heart"></i><span>찜한 매장</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="location.href='/notifications.html'"><i class="ph ph-bell"></i><span>알림</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="go('chat')"><i class="ph ph-chat-circle"></i><span>상담 내역</span><i class="ph ph-caret-right row-caret"></i></div>
+    </div>
 </section>
 
+<section class="section">
+    <div class="list-head">신뢰 · 안전</div>
+    <div class="menu-list">
+        <div class="menu-item" onclick="showToast('인증 기준 안내 페이지는 준비 중입니다.')"><i class="ph ph-shield-check"></i><span>인증 기준 안내</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="showToast('피해 신고 접수는 준비 중입니다.')"><i class="ph ph-warning-circle"></i><span>피해 신고 · 분쟁 조정</span><i class="ph ph-caret-right row-caret"></i></div>
+    </div>
+</section>
 
 <section class="section">
-
-<div class="section-title" style="margin-bottom:15px">
-설정
-</div>
-
-<div class="menu-list">
-
-<div class="menu-item" onclick="showToast('매장 관리자 페이지로 이동합니다.')">
-
-<span>🏪</span>
-
-<span>내 매장 관리</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="showToast('관리자 설정입니다.')">
-
-<span>⚙️</span>
-
-<span>관리자 설정</span>
-
-<span>›</span>
-
-</div>
-
-<div class="menu-item" onclick="confirmLogout()">
-
-<span>🚪</span>
-
-<span>로그아웃</span>
-
-<span>›</span>
-
-</div>
-
-</div>
-
+    <div class="list-head">설정</div>
+    <div class="menu-list">
+        <div class="menu-item" onclick="goShopAdmin()"><i class="ph ph-storefront"></i><span>내 매장 관리</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="goSiteAdmin()"><i class="ph ph-gear-six"></i><span>관리자 설정</span><i class="ph ph-caret-right row-caret"></i></div>
+        <div class="menu-item" onclick="confirmLogout()"><i class="ph ph-sign-out"></i><span>로그아웃</span><i class="ph ph-caret-right row-caret"></i></div>
+    </div>
 </section>
 
 </div>
@@ -2122,95 +536,38 @@ MY
 <!-- ================= MY QUOTES ================= -->
 
 <div class="screen" id="myquotes">
-
 <div class="page-header">
-
-<button class="back-btn" onclick="go('mypage')">‹</button>
-
-내 견적
-
+    <button class="back-btn" onclick="go('mypage')"><i class="ph ph-arrow-left"></i></button>
+    내 견적
 </div>
-
 <div class="page-content" id="myquotesContent">
-
-<p>불러오는 중...</p>
-
+    <p>불러오는 중...</p>
 </div>
-
 </div>
 
 
 <!-- ================= MY RESERVATIONS ================= -->
 
 <div class="screen" id="myreservations">
-
 <div class="page-header">
-
-<button class="back-btn" onclick="go('mypage')">‹</button>
-
-예약 내역
-
+    <button class="back-btn" onclick="go('mypage')"><i class="ph ph-arrow-left"></i></button>
+    예약 내역
 </div>
-
 <div class="page-content" id="myreservationsContent">
-
-<p>불러오는 중...</p>
-
+    <p>불러오는 중...</p>
 </div>
-
 </div>
 
 
 <!-- ================= NAV ================= -->
 
 <nav class="bottom-nav">
-
-<button class="nav-item active" onclick="go('home',this)">
-
-<div class="nav-icon">⌂</div>
-
-홈
-
-</button>
-
-
-<button class="nav-item" onclick="go('bid',this)">
-
-<div class="nav-icon">💰</div>
-
-거래
-
-</button>
-
-
-<button class="nav-item nav-center" onclick="go('build',this)">
-
-<div class="nav-icon">✦</div>
-
-견적
-
-</button>
-
-
-<button class="nav-item" onclick="go('shops',this)">
-
-<div class="nav-icon">⌖</div>
-
-매장
-
-</button>
-
-
-<button class="nav-item" onclick="go('mypage',this)">
-
-<div class="nav-icon">♙</div>
-
-MY
-
-</button>
-
+    <button class="nav-item active" onclick="go('home',this)"><i class="ph-fill ph-house nav-icon"></i>홈</button>
+    <button class="nav-item" onclick="go('bid',this)"><i class="ph ph-gavel nav-icon"></i>거래</button>
+    <button class="nav-item nav-center" onclick="go('build',this)"><i class="ph ph-note-pencil nav-icon"></i>견적</button>
+    <button class="nav-item" onclick="go('shops',this)"><i class="ph ph-storefront nav-icon"></i>매장</button>
+    <button class="nav-item" onclick="go('mypage',this)"><i class="ph ph-user nav-icon"></i>MY</button>
 </nav>
-
 
 <div class="toast" id="toast"></div>
 
@@ -2218,50 +575,46 @@ MY
 <!-- ================= AUTH MODAL ================= -->
 
 <div class="modal-overlay" id="authModal">
-
 <div class="modal-box">
+    <div class="modal-tabs">
+        <div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')">로그인</div>
+        <div class="modal-tab" id="tabRegister" onclick="switchAuthTab('register')">회원가입</div>
+    </div>
 
-<div class="modal-tabs">
-<div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')">로그인</div>
-<div class="modal-tab" id="tabRegister" onclick="switchAuthTab('register')">회원가입</div>
-</div>
+    <div id="loginForm">
+        <h2>로그인</h2>
+        <div class="form-group">
+            <label>이메일</label>
+            <input class="input" id="loginEmail" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+            <label>비밀번호</label>
+            <input class="input" id="loginPassword" type="password" placeholder="비밀번호">
+        </div>
+        <div class="modal-error" id="loginError"></div>
+        <button class="primary-btn" style="width:100%" onclick="submitLogin()">로그인</button>
+    </div>
 
-<div id="loginForm">
-<h2>로그인</h2>
-<div class="form-group">
-<label>이메일</label>
-<input class="input" id="loginEmail" type="email" placeholder="you@example.com">
-</div>
-<div class="form-group">
-<label>비밀번호</label>
-<input class="input" id="loginPassword" type="password" placeholder="비밀번호">
-</div>
-<div class="modal-error" id="loginError"></div>
-<button class="primary-btn" style="width:100%" onclick="submitLogin()">로그인</button>
-</div>
+    <div id="registerForm" style="display:none">
+        <h2>회원가입</h2>
+        <div class="form-group">
+            <label>이름</label>
+            <input class="input" id="registerName" placeholder="이름">
+        </div>
+        <div class="form-group">
+            <label>이메일</label>
+            <input class="input" id="registerEmail" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+            <label>비밀번호 (8자 이상)</label>
+            <input class="input" id="registerPassword" type="password" placeholder="비밀번호">
+        </div>
+        <div class="modal-error" id="registerError"></div>
+        <button class="primary-btn" style="width:100%" onclick="submitRegister()">회원가입</button>
+    </div>
 
-<div id="registerForm" style="display:none">
-<h2>회원가입</h2>
-<div class="form-group">
-<label>이름</label>
-<input class="input" id="registerName" placeholder="이름">
+    <div class="modal-close" onclick="closeAuthModal()">닫기</div>
 </div>
-<div class="form-group">
-<label>이메일</label>
-<input class="input" id="registerEmail" type="email" placeholder="you@example.com">
-</div>
-<div class="form-group">
-<label>비밀번호 (8자 이상)</label>
-<input class="input" id="registerPassword" type="password" placeholder="비밀번호">
-</div>
-<div class="modal-error" id="registerError"></div>
-<button class="primary-btn" style="width:100%" onclick="submitRegister()">회원가입</button>
-</div>
-
-<div class="modal-close" onclick="closeAuthModal()">닫기</div>
-
-</div>
-
 </div>
 
 </div>
@@ -2362,12 +715,12 @@ function updateUserUI() {
     const headerBtn = document.getElementById('headerAuthBtn');
     if (currentUser) {
         const profileName = document.getElementById('profileName');
-        if (profileName) profileName.textContent = `${currentUser.name}님 👋`;
-        if (headerBtn) headerBtn.textContent = '😊';
+        if (profileName) profileName.textContent = `${currentUser.name}님`;
+        if (headerBtn) headerBtn.innerHTML = '<i class="ph-fill ph-user-circle"></i>';
     } else {
         const profileName = document.getElementById('profileName');
         if (profileName) profileName.textContent = '로그인이 필요합니다';
-        if (headerBtn) headerBtn.textContent = '👤';
+        if (headerBtn) headerBtn.innerHTML = '<i class="ph ph-user-circle"></i>';
     }
 }
 
@@ -2482,8 +835,10 @@ function shopImgHtml(shop) {
     }
     if (!Array.isArray(arr)) arr = [];
     var src = String(shop.cover_image || shop.image_url || shop.thumbnail || arr[0] || '').trim();
-    if (!src) return '🖥️';
-    return '<img src="' + src.replace(/"/g, '') + '" alt="매장 사진" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML=\'🖥️\'">';
+    if (!src) return '<i class="ph ph-image"></i>';
+    // 서버는 base64 이미지를 DB에 보관합니다. 마크업에 그대로 싣지 않고 프록시 경로로 받습니다.
+    if (/^data:image\//i.test(src) && shop.id) src = '/api/shop-image/' + encodeURIComponent(shop.id);
+    return '<img src="' + src.replace(/"/g, '') + '" alt="매장 사진" loading="lazy" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML=&quot;&quot;">';
 }
 
 async function loadHomeData() {
@@ -2502,14 +857,14 @@ async function loadHomeData() {
                 <div class="shop-body">
                     <div class="shop-name-row">
                         <div class="shop-name">${shop.shop_name}</div>
-                        <div>♡</div>
+                        <div><i class="ph ph-heart" style="font-size:19px;color:#A8AFB9"></i></div>
                     </div>
-                    <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 후기 ${shop.review_count || 0}개</div>
+                    <div class="shop-rating"><i class="ph-fill ph-star" style="color:#F5A623"></i> ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 후기 ${shop.review_count || 0}개</div>
                     <div class="shop-tags">
                         <span class="tag">PC 전문</span>
                     </div>
                     <div class="shop-actions">
-                        <button class="secondary-btn" onclick="go('chat')">💬 상담하기</button>
+                        <button class="secondary-btn" onclick="go('chat')"><i class="ph ph-chat-circle"></i> 상담하기</button>
                         <button class="small-primary" onclick="go('shops')">견적 요청</button>
                     </div>
                 </div>
@@ -2599,12 +954,12 @@ async function loadShops() {
                 <div class="shop-image">${shopImgHtml(shop)}</div>
                 <div class="shop-body">
                     <div class="shop-name">${shop.shop_name}</div>
-                    <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
+                    <div class="shop-rating"><i class="ph-fill ph-star" style="color:#F5A623"></i> ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
                     <div class="shop-tags">
                         <span class="tag">PC 전문</span>
                     </div>
                     <div class="shop-actions">
-                        <button class="secondary-btn" onclick="go('chat')">💬 상담</button>
+                        <button class="secondary-btn" onclick="go('chat')"><i class="ph ph-chat-circle"></i> 상담</button>
                         <button class="small-primary" onclick="location.href='/reserve.html?shop=${shop.id}'">방문 예약</button>
                     </div>
                 </div>
@@ -2644,7 +999,7 @@ function renderInspectionShops(shops, locationNote) {
                     <span class="shop-name">${escInspectionText(shop.shop_name)}</span>
                     ${shop.distance != null ? `<span class="shop-rating">${Number(shop.distance).toFixed(1)}km</span>` : ''}
                 </div>
-                <div class="shop-rating">⭐ ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
+                <div class="shop-rating"><i class="ph-fill ph-star" style="color:#F5A623"></i> ${parseFloat(shop.avg_rating || 0).toFixed(1)} · 리뷰 ${shop.review_count || 0}개</div>
                 <p style="margin:6px 0 0;font-size:12px;color:var(--sub)">${escInspectionText(shop.address || '')}</p>
                 <div class="shop-actions">
                     <button class="secondary-btn" onclick="location.href='/shop.html?id=${shop.id}'">매장 보기</button>
@@ -2747,7 +1102,7 @@ async function loadBids() {
         if (bids.length > 0) {
             html += bids.map((bid, i) => `
                 <div class="bid-card">
-                    <div class="rank">${['🥇','🥈','🥉'][i] || '•'}</div>
+                    <div class="rank">${i + 1}</div>
                     <div class="bid-info">
                         <strong>${bid.shop_name}</strong>
                         <span>⭐ ${parseFloat(bid.rating || 0).toFixed(1)}</span>
@@ -2759,7 +1114,7 @@ async function loadBids() {
             html += '<p>아직 입찰이 없습니다. 인증 매장들이 확인 후 입찰을 남기면 여기에 표시됩니다.</p>';
         }
         
-        html += '<button class="primary-btn" style="margin-top:10px" onclick="showToast(\'최고가 변경 알림 기능은 준비 중입니다. 추후 업데이트 예정입니다.\')">🔔 최고가 변경 알림 받기</button>';
+        html += '<button class="primary-btn" style="margin-top:10px" onclick="showToast(\'최고가 변경 알림 기능은 준비 중입니다. 추후 업데이트 예정입니다.\')">최고가 변경 알림 받기</button>';
         container.innerHTML = html;
     } catch (error) {
         showToast('입찰 정보를 불러오지 못했습니다.');
@@ -2918,7 +1273,7 @@ async function loadMyPage() {
         return;
     }
     
-    document.getElementById('profileName').textContent = `${currentUser.name}님 👋`;
+    document.getElementById('profileName').textContent = `${currentUser.name}님`;
     
     try {
         const reservations = await apiCall('/reservations/my');
@@ -3006,11 +1361,88 @@ function showToast(message) {
     }, 2500);
 }
 
+/* ================= 관리 메뉴 (역할별) ================= */
+
+function goShopAdmin() {
+    const role = String(currentUser?.role || '').toLowerCase();
+    if (role === 'shop') return location.href = '/partner.html';
+    if (role === 'admin') return showToast('최고 관리자 계정에는 매장 관리가 필요하지 않습니다.');
+    showToast('업체 계정으로 로그인하면 매장을 관리할 수 있습니다.');
+}
+
+function goSiteAdmin() {
+    if (String(currentUser?.role || '').toLowerCase() === 'admin') return location.href = '/admin.html';
+    showToast('최고 관리자 계정만 이용할 수 있습니다.');
+}
+
+/* ================= 오늘의 특가 ================= */
+
+function escAttr(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function loadSpecialDeals() {
+    const wrap = document.getElementById('specialDeals');
+    if (!wrap) return;
+    let list = [];
+    try {
+        const r = await fetch('/api/special-banners', { cache: 'no-store' });
+        const d = await r.json();
+        list = Array.isArray(d.banners) ? d.banners.slice(0, 4) : [];
+    } catch (e) { return; }
+    if (!list.length) return;
+
+    const track = document.getElementById('dealsTrack');
+    const dots = document.getElementById('dealsDots');
+    track.innerHTML = list.map((b, i) => `<a class="deals-item" href="${escAttr(b.link_url)}" target="_blank" rel="noopener noreferrer">
+        <img src="${escAttr(b.image_url)}" alt="${escAttr(b.title || '특가 상품')}" loading="${i ? 'lazy' : 'eager'}">
+        <div class="deals-copy"><strong>${escAttr(b.title || '오늘의 특가')}</strong>${b.subtitle ? `<span>${escAttr(b.subtitle)}</span>` : ''}</div>
+    </a>`).join('');
+    dots.innerHTML = list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('');
+    wrap.hidden = false;
+
+    if (list.length < 2) return;
+    let index = 0, timer = null;
+    const move = () => {
+        index = (index + 1) % list.length;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dots.querySelectorAll('i').forEach((x, i) => x.classList.toggle('on', i === index));
+    };
+    const start = () => { clearInterval(timer); timer = setInterval(move, 4500); };
+    wrap.addEventListener('mouseenter', () => clearInterval(timer));
+    wrap.addEventListener('mouseleave', start);
+    wrap.addEventListener('touchstart', () => clearInterval(timer), { passive: true });
+    wrap.addEventListener('touchend', start, { passive: true });
+    start();
+}
+
+/* ================= 히어로 배경 이미지 ================= */
+
+async function loadHeroImages() {
+    let images = [];
+    try {
+        const r = await fetch('/api/images/featured/banner', { cache: 'no-store' });
+        if (!r.ok) return;
+        images = (await r.json()).images || [];
+    } catch (e) { return; }
+    if (!images.length) return;
+    const slot = t => { const m = String(t || '').match(/배너\s*(\d+)/); return m ? parseInt(m[1], 10) - 1 : -1; };
+    document.querySelectorAll('.hero').forEach((hero, i) => {
+        const img = images.find(b => slot(b.title) === i) || images[i % images.length];
+        if (!img?.image_url) return;
+        hero.style.backgroundImage = `linear-gradient(90deg,rgba(13,19,28,.86) 0%,rgba(13,19,28,.52) 58%,rgba(13,19,28,.18) 100%),url(${img.image_url})`;
+        hero.style.backgroundSize = 'cover';
+        hero.style.backgroundPosition = 'center';
+    });
+}
+
 /* ================= INIT ================= */
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     loadHomeData();
+    loadSpecialDeals();
+    loadHeroImages();
 });
 
 </script>
