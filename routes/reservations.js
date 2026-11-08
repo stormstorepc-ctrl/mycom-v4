@@ -22,6 +22,8 @@ router.get('/my', authenticate, async (req,res)=>{try{const r=await db.query(`SE
 router.get('/shop/:shopId',authenticate,authorize('shop','admin'),async(req,res)=>{try{const{shopId}=req.params;if(req.user.role==='shop'){const s=await db.query('SELECT user_id FROM shops WHERE id=$1',[shopId]);if(!s.rows.length||s.rows[0].user_id!==req.user.id)return res.status(403).json({error:'예약 목록 조회 권한이 없습니다.'})}const r=await db.query(`SELECT r.*,u.name user_name,u.phone user_phone FROM reservations r JOIN users u ON u.id=r.user_id WHERE r.shop_id=$1 ORDER BY r.reservation_date DESC,r.reservation_time DESC`,[shopId]);res.json({reservations:r.rows})}catch(e){res.status(500).json({error:'매장 예약 목록 조회 오류'})}});
 
 router.put('/:id/status',authenticate,async(req,res)=>{try{const{id}=req.params,{status}=req.body;if(!['pending','confirmed','completed','cancelled'].includes(status))return res.status(400).json({error:'올바르지 않은 상태입니다.'});const rr=await db.query('SELECT * FROM reservations WHERE id=$1',[id]);if(!rr.rows.length)return res.status(404).json({error:'예약을 찾을 수 없습니다.'});const reservation=rr.rows[0];
+    // 취소·완료된 예약은 최종 상태입니다. 되살리면 같은 시간대 이중 예약이 생길 수 있습니다.
+    if(['cancelled','completed'].includes(reservation.status)&&status!==reservation.status)return res.status(409).json({error:'이미 취소되었거나 완료된 예약은 상태를 변경할 수 없습니다.'});
     // 고객은 본인 예약의 취소만 가능. 업체/관리자만 승인·완료 처리할 수 있습니다.
     if(req.user.role==='user'){
       if(reservation.user_id!==req.user.id)return res.status(403).json({error:'예약 수정 권한이 없습니다.'});
